@@ -2,8 +2,25 @@ package contractLanguages
 
 import java.util.Date
 
+// The prefix format is extended here to associate a name for a particular received event,
+// making it possible to formulate a predicate on it. This predicate follows the keyword where,
+// and the event is only accepted if it evaluates to True. The BikeOrder event is bound to
+// a variable named order, and we use the where clause to check that the fields of order have
+// the desired values, using the connective && which is the logical “and” operator. In this
+// case, the event order is accepted only if the field order.price is set to 100 and the field
+// order.recipient is set to seller. Likewise, the BikeDelivery event is bound to the variable
+// delivery and is only accepted if delivery.recipient is buyer.
 
-abstract case class Event(agent: Agent, timeStamp: Date) {
+
+sealed abstract case class Event(agent: Agent, timeStamp: Date) {
+	// sealed class: can only be extended in the present file
+	// abstract class: cannot be instantiated, normally used to be extended
+	// case class: out-of-the-box methods & other convenient methods
+
+	// the event class is one of the most basic constituents of our contracts.
+	// events happen and the contract progresses.
+
+	// a contract is a set of events.
 
 }
 
@@ -41,7 +58,7 @@ case class Order() extends Event{}
 
 case class Delivery() extends Event{}
 
-case class Payment() extends Event{}
+case class Payment() extends Event{deadline: Date}
 
 // inventory
 // maps string ("item" -> price)

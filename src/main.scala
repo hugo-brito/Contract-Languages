@@ -1,3 +1,5 @@
-class main {
+class main extends App {
+
+
 
 }
