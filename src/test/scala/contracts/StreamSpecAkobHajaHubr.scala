@@ -1,23 +1,4 @@
-// Advanced Programming, A. Wąsowski, IT University of Copenhagen
-//
-// Group number: 25
-//
-// AUTHOR1: André Kobæk
-// TIME1: 4.5 hours <- how much time have you used on solving this exercise set
-// (excluding reading the book, fetching pizza, and going out for a smoke)
-//
-// AUTHOR2: Hugo Brito
-// TIME2: 5.5 <- how much time have you used on solving this exercise set
-// (excluding reading the book, fetching pizza, and going out for a smoke)
-//
-// AUTHOR2: Jonas Hartmann Andersen
-// TIME3: 6 <- how much time have you used on solving this exercise set
-// (excluding reading the book, fetching pizza, and going out for a smoke)
-// You should work with the file by following the associated exercise sheet
-// (available in PDF from the course website).
-
-package fpinscala.laziness
-import scala.language.higherKinds
+package contracts
 
 import org.scalatest.{FreeSpec, Matchers}
 import org.scalatest.prop.PropertyChecks
@@ -25,22 +6,9 @@ import org.scalacheck.Gen
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 
-// If you comment out all the import lines below, then you test the Scala
-// Standard Library implementation of Streams. Interestingly, the standard
-// library streams are stricter than those from the book, so some laziness tests
-// fail on them.
-
-import stream00._    // uncomment to test the book solution
-// import stream01._ // uncomment to test the broken headOption implementation
-// import stream02._ // uncomment to test another version that breaks headOption
+import contract._ // getting the DSL imported language in
 
 class StreamSpecAkobHajaHubr extends FreeSpec with Matchers with PropertyChecks {
-
-  import Stream._
-
-  final case class FailException(private val message: String = "fail", 
-    private val cause: Throwable = None.orNull) extends Exception(message, cause)
-
 
   // A simple converter of lists to streams
   def list2stream[A] (la :List[A]): Stream[A] =
