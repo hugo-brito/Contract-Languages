@@ -20,11 +20,18 @@ sealed abstract case class Event(agent: Agent, timeStamp: Date) {
 	// the event class is one of the most basic constituents of our contracts.
 	// events happen and the contract progresses.
 
-	// a contract is a set of events.
+	// a contract is a set of events subsequent.
 
 }
 
-case class Order() extends Event{}
+case class Order(override val agent: Agent, override val timeStamp: Date, recipient: Agent, item: String) extends Event(agent, timeStamp) {
+	// recipient = the recipient of the order
+	// item = the item ordered
+	val EventType = "Order"
+
+	def apply(agent: Agent, timeStamp: Date, recipient: Agent, item: String): Order = new Order(agent, timeStamp, recipient, item): Order
+	// the apply method allows for an easy way to create new objects
+}
 /* we want to use case classes because:
 
 	case class Person(name: String, age: Int)
@@ -56,9 +63,20 @@ case class Order() extends Event{}
 	// 7. case classes have extractor patterns = Case classes can be used in PATTERN MATCHING
 */
 
-case class Delivery() extends Event{}
+case class Delivery(override val agent: Agent, override val timeStamp: Date, recipient: Agent, item: String) extends Event(agent, timeStamp){
+	// recipient =  the recipient of the delivery
+	val EventType = "Delivery"
 
-case class Payment() extends Event{deadline: Date}
+	def apply(agent: Agent, timeStamp: Date, recipient: Agent, item: String): Delivery = new Delivery(agent, timeStamp, recipient, item)
+}
+
+case class Payment(override val agent: Agent, override val timeStamp: Date, recipient: Agent, amountDKK: Int) extends Event(agent, timeStamp){
+	// recipient = the recipient of the payment
+	// amountDKK = the amount paid to the recipient
+	val EventType = "Payment"
+
+	def apply(agent: Agent, timeStamp: Date, recipient: Agent, amountDKK: Int): Payment = new Payment(agent, timeStamp, recipient, amountDKK)
+}
 
 // inventory
 // maps string ("item" -> price)

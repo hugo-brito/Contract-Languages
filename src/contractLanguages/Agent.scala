@@ -11,10 +11,10 @@ sealed abstract case class Agent(name: String, taxNum: Int)
 // abstract: cannot be instantiated
 // case: many out of the box functions such as hashCode, toString.. etc
 
-case class Supplier()
+// the constructor takes a name and a taxNum.
+
+case class Supplier(override val name: String, override val taxNum: Int, inventory: Map[String, Int]) extends Agent(name, taxNum)
 // has an inventory of goods to sell
 
-case class Buyer()
+case class Buyer(override val name: String, override val taxNum: Int, balanceDKK: Int) extends Agent(name, taxNum)
 // has money to pay for goods
-
-case class
