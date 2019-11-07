@@ -76,8 +76,8 @@
     % TODO: Consider osf in mathpazo
     % PT Sans Narrow for sans serif
     \usepackage{PTSansNarrow}
-    % Luxi Mono is an attractive typewriter font with bold and italic
-    \usepackage[scaled]{luximono}
+    % % Luxi Mono is an attractive typewriter font with bold and italic
+    % \usepackage[scaled]{luximono}
 
 \fi
 
