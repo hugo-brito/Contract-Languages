@@ -31,8 +31,8 @@ type Contract =
     | Succ | Fail
 
 let rec evalC (e :Events) = function
-    | Atom(ord) -> Atom(ord)
-    | Then(c1,c2) -> evalC e c1
+    | Atom(ord) -> if (ord == e) then Succ else Fail
+    | Then(c1,c2) -> if (evalC e c1 == Succ) then c2 else Fail
     | Or -> 
     | Where -> 
     | Succ -> Succ
