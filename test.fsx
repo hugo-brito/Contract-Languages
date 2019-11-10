@@ -1,4 +1,4 @@
-open System
+module ContractLanguage
 
 type Agent = {
     name: string
@@ -31,24 +31,13 @@ type Events =
     | Del of Delivery
     | Pay of Payment
 
-let checkOrd (am :int) (reci :Agent) (item :string) = function
-    | Ord(o) -> o.amount = am && o.recipient = reci && o.item = item
-    | _ -> false
-
-let checkDel item buyer = function
-    | Del(d) -> d.item = item && d.recipient = buyer
-    | _ -> false
-
-let checkPay = function
-    | Pay(p) -> true
-    | _ -> false
-
 type Contract = 
     | Atom of (Events -> bool)
     | Then of Contract * Contract
     | Or of Contract * Contract
     | Succ | Fail
 
+// related to evaluation of contract
 let succCheck = function
     | Succ -> true
     | _ -> false
@@ -61,64 +50,52 @@ let rec evalC (e :Events) = function
     | Or(_) -> Fail
     | Succ | Fail -> Fail // should not be in language
 
-// let date = "01/11/2019"
-// let item = "bike"
-// let seller = {name = "John"}
-// let buyer = {name = "Yvonne"}
-// let amount = 200
 
-// write example contracts, use the eval function.
+// Related to contract template
+let checkOrd (am :int) (reci :Agent) (item :string) = function
+    | Ord(o) -> o.amount = am && o.recipient = reci && o.item = item
+    | _ -> false
 
-let templateBuyContract buyer seller amount item time : Contract =
+let checkDel item buyer = function
+    | Del(d) -> d.item = item && d.recipient = buyer
+    | _ -> false
+
+let checkPay total reci = function
+    | Pay(p) -> p.amount = total && p.recipient = reci
+    | _ -> false
+
+let templateBuyContract buyer seller amount item : Contract =
     let orderEvent = Atom (fun e -> checkOrd amount seller item e)
-    let delEvent = Atom (fun e ->  checkDel e)
-    let payEvent = Atom (Pay {item = item;
-                                    payer = buyer;
-                                    recipient = seller;
-                                    time = time})
-    Then(payEvent, Then(orderEvent, delEvent))
-    //  This expression was expected to have type 'Events -> bool'
-    //  but here has type 'Events' 
+    let delEvent = Atom (fun e ->  checkDel item buyer e)
+    let payEvent = Atom (fun e -> checkPay amount seller e)
+    Then(orderEvent, Then(payEvent, delEvent))
 
-let templateResourceContract buyer seller amount item time : Contract = 
-    let orderEvent = Atom (Ord {amount = amount;
-                                    item = item;
-                                    recipient = seller;
-                                    instigator = buyer;
-                                    time = time})
+// to allow for easy creation of Contract
+let initAgent name = {name=name}
+let date = "01/11/2019"
+let item = "bike"
+let seller = initAgent "John"
+let buyer = initAgent "Yvonne"
+let amount = 200
 
-    let delEvent = Atom (Del {item = item;
-                                    recipient = buyer;
-                                    instigator = seller;
-                                    time = time})
-    Then(orderEvent,delEvent)
+let exampleContract = templateBuyContract buyer seller amount item
 
+// To ease creation of events
+let initOrder a i reci ins t = Ord({amount=a; item=i; recipient=reci; instigator=ins;time=t})
+let initDel i reci ins t = Del({item=i;recipient=reci;instigator=ins;time=t})
+let initPay a p reci t = Pay({amount=a;payer=p;recipient=reci;time=t})
 
-let peter = {name = "Peter"}
-let john = {name = "John"}
+let ordEvent = initOrder amount item seller buyer date
+let wOrdEvent = initOrder 1 item seller buyer date
+let payEvent = initPay amount buyer seller date
+let wPayEvent = initPay amount buyer (initAgent "Daniel") date
+let delEvent = initDel item buyer seller date
+let wDelEvent = initDel "hammer" buyer seller date
 
-let peterBuysBikeFromJohn = templateBuyContract peter john 10 "bike" "today"
+let ordCon = evalC ordEvent exampleContract
+let payCon = evalC payEvent ordCon
+evalC delEvent payCon // evaluates the contract successfully
 
-evalC peterBuysBikeFromJohn;;
-
-templateResourceContract buyer seller amount item date
-
-/// There needs to happen an order event of hammer with price 10 made by agent Yvonne (buyer)
-///  which John will then received at 01/11/2019 (date).
-/// If that does not happen, the order will fail.
-/// If it is does happen then it will succeed and the contract is complete.
-Then(
-    Then(
-        Or(
-            Atom(Ord{amount=10; item="hammer"; recipient=seller; instigator=buyer;time=date}),
-            Atom(Ord{amount=10; item!="hammer"; recipient!=seller; instigator=buyer;time=date})),
-        Fail),
-    Succ)
-
-
-
-// let ole = {name = "Ole"}
-// let order = {amount = 10; agent =  ole; item = "Ost"}
-
-// printf "amount: %i person: %s item: %s \n" order.amount order.agent.name order.item
-// printf "%A\n" order
+let wOrdCon = evalC wOrdEvent exampleContract
+let wPayCon = evalC wPayEvent wOrdCon
+let wdelCon = evalC wDelEvent payCon // all of these use incorrect events, hence it is evaluated incorrectly
