@@ -24,25 +24,30 @@ type Events =
     | Del of Delivery
 
 type Contract = 
-    | Atom of Events
+    | Atom of (Events -> bool)
     | Then of Contract * Contract
     | Or of Contract * Contract
-    | Where of (Events -> bool)
     | Succ | Fail
 
+let succCheck = function
+    | Succ -> true
+    | _ -> false
+
 let rec evalC (e :Events) = function
-    | Atom(ord) -> if (ord == e) then Succ else Fail
-    | Then(c1,c2) -> if (evalC e c1 == Succ) then c2 else Fail
-    | Or -> 
-    | Where -> 
-    | Succ -> Succ
-    | Fail -> Fail
+    | Atom(f) -> if (f e) then Succ else Fail
+    | Then(c1,c2) -> if (succCheck(evalC e c1)) then c2 else Fail
+    | Or(c1,_) when succCheck (evalC e c1) -> Succ
+    | Or(_,c2) when succCheck (evalC e c2) -> Succ
+    | Or(_) -> Fail
+    | Succ | Fail -> Fail // should not be in language
 
 let date = "01/11/2019"
 let item = "bike"
 let seller = {name = "John"}
 let buyer = {name = "Yvonne"}
 let amount = 200
+
+
 
 let templateResourceContract buyer seller amount item time : Contract = 
     let orderEvent = Atom (Ord {amount = amount;
