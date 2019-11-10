@@ -47,7 +47,7 @@ let seller = {name = "John"}
 let buyer = {name = "Yvonne"}
 let amount = 200
 
-
+// write example contracts, use the eval function.
 
 let templateResourceContract buyer seller amount item time : Contract = 
     let orderEvent = Atom (Ord {amount = amount;
