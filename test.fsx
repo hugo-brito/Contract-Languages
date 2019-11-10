@@ -31,6 +31,18 @@ type Events =
     | Del of Delivery
     | Pay of Payment
 
+let checkOrd (am :int) (reci :Agent) (item :string) = function
+    | Ord(o) -> o.amount = am && o.recipient = reci && o.item = item
+    | _ -> false
+
+let checkDel item buyer = function
+    | Del(d) -> d.item = item && d.recipient = buyer
+    | _ -> false
+
+let checkPay = function
+    | Pay(p) -> true
+    | _ -> false
+
 type Contract = 
     | Atom of (Events -> bool)
     | Then of Contract * Contract
@@ -58,15 +70,8 @@ let rec evalC (e :Events) = function
 // write example contracts, use the eval function.
 
 let templateBuyContract buyer seller amount item time : Contract =
-    let orderEvent = Atom (Ord {amount = amount;
-                                    item = item;
-                                    recipient = seller;
-                                    instigator = buyer;
-                                    time = time})
-    let delEvent = Atom (Del {item = item;
-                                    recipient = buyer;
-                                    instigator = seller;
-                                    time = time})
+    let orderEvent = Atom (fun e -> checkOrd amount seller item e)
+    let delEvent = Atom (fun e ->  checkDel e)
     let payEvent = Atom (Pay {item = item;
                                     payer = buyer;
                                     recipient = seller;
