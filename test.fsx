@@ -19,9 +19,17 @@ type Delivery = {
     time: string
 }
 
+type Payment = {
+    amount: int
+    payer: Agent
+    recipient: Agent
+    time: string
+}
+
 type Events = 
     | Ord of Order
     | Del of Delivery
+    | Pay of Payment
 
 type Contract = 
     | Atom of (Events -> bool)
@@ -41,13 +49,31 @@ let rec evalC (e :Events) = function
     | Or(_) -> Fail
     | Succ | Fail -> Fail // should not be in language
 
-let date = "01/11/2019"
-let item = "bike"
-let seller = {name = "John"}
-let buyer = {name = "Yvonne"}
-let amount = 200
+// let date = "01/11/2019"
+// let item = "bike"
+// let seller = {name = "John"}
+// let buyer = {name = "Yvonne"}
+// let amount = 200
 
 // write example contracts, use the eval function.
+
+let templateBuyContract buyer seller amount item time : Contract =
+    let orderEvent = Atom (Ord {amount = amount;
+                                    item = item;
+                                    recipient = seller;
+                                    instigator = buyer;
+                                    time = time})
+    let delEvent = Atom (Del {item = item;
+                                    recipient = buyer;
+                                    instigator = seller;
+                                    time = time})
+    let payEvent = Atom (Pay {item = item;
+                                    payer = buyer;
+                                    recipient = seller;
+                                    time = time})
+    Then(payEvent, Then(orderEvent, delEvent))
+    //  This expression was expected to have type 'Events -> bool'
+    //  but here has type 'Events' 
 
 let templateResourceContract buyer seller amount item time : Contract = 
     let orderEvent = Atom (Ord {amount = amount;
@@ -62,6 +88,14 @@ let templateResourceContract buyer seller amount item time : Contract =
                                     time = time})
     Then(orderEvent,delEvent)
 
+
+let peter = {name = "Peter"}
+let john = {name = "John"}
+
+let peterBuysBikeFromJohn = templateBuyContract peter john 10 "bike" "today"
+
+evalC peterBuysBikeFromJohn;;
+
 templateResourceContract buyer seller amount item date
 
 /// There needs to happen an order event of hammer with price 10 made by agent Yvonne (buyer)
@@ -75,6 +109,8 @@ Then(
             Atom(Ord{amount=10; item!="hammer"; recipient!=seller; instigator=buyer;time=date})),
         Fail),
     Succ)
+
+
 
 // let ole = {name = "Ole"}
 // let order = {amount = 10; agent =  ole; item = "Ost"}
