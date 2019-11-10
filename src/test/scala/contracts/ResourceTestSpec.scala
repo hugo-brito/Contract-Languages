@@ -6,9 +6,9 @@ import org.scalacheck.Gen
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 
-import contract._ // getting the DSL imported language in
+import contracts.Resource._ // getting the DSL imported language in
 
-class StreamSpecAkobHajaHubr extends FreeSpec with Matchers with PropertyChecks {
+class ResourceTestSpec extends FreeSpec with Matchers with PropertyChecks {
 
   // A simple converter of lists to streams
   def list2stream[A] (la :List[A]): Stream[A] =

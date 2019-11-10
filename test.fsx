@@ -8,14 +8,14 @@ type Order = {
     amount: int
     item: string
     recipient: Agent // receives the event
-    instigator: Agent // instigates out the the event
+    instigator: Agent // instigates the event
     time: string
 }
 
 type Delivery = {
     item: string
     recipient: Agent // receives the event
-    instigator: Agent // instigates out the the event
+    instigator: Agent // instigates the event
     time: string
 }
 
@@ -66,8 +66,8 @@ let checkPay total reci = function
 
 let templateBuyContract buyer seller amount item : Contract =
     let orderEvent = Atom (fun e -> checkOrd amount seller item e)
-    let delEvent = Atom (fun e ->  checkDel item buyer e)
     let payEvent = Atom (fun e -> checkPay amount seller e)
+    let delEvent = Atom (fun e ->  checkDel item buyer e)
     Then(orderEvent, Then(payEvent, delEvent))
 
 // to allow for easy creation of Contract
