@@ -47,6 +47,29 @@
   \end{minipage}\end{shaded}
 }
 
+% referrencing websites
+\usepackage{hyperref}
+
+% Code formatting   
+\usepackage{listings}
+\lstset{
+   language=java,
+   extendedchars=true,
+   basicstyle=\footnotesize\ttfamily,
+   showstringspaces=false,
+   showspaces=false,
+   numbers=left,
+   numberstyle=\footnotesize,
+   numbersep=9pt,
+   tabsize=2,
+   breaklines=true,
+   showtabs=false,
+   frame=single,
+   extendedchars=false,
+   inputencoding=utf8,
+   captionpos=b
+}
+
 %% Get \maketitle to produce something nice for ITU
 \setlength{\droptitle}{5cm}
 
@@ -200,7 +223,7 @@
 \makeatletter
 \def\sups{\iflanguage{danish}%
   {Vejleder\@ifundefined{itusupervisorextra}{}{e}}%
-  {Advisor\@ifundefined{itusupervisorextra}{}{s}}%
+  {Supervisor\@ifundefined{itusupervisorextra}{}{s}}%
 }
 \def\extrasup{\@ifundefined{itusupervisorextra}{}{\iflanguage{danish}{ og}{ and} \itusupervisorextra}}
 \makeatother
@@ -209,28 +232,30 @@
 %%% typesets the TITLE page
 \newcommand{\thetitlepage}{
   \thispagestyle{empty}
-  \begin{tikzpicture}[remember picture,overlay,line width=0mm,shift=(current page.center)]
-    \node[align=center,font=\sffamily\Huge] (title) at (0, 3cm){
-      \itutitle
-    };
-    \node[align=center,font=\sffamily\Large] (author) at (0, 1cm){
-      \ituauthor
-    };
-  \end{tikzpicture}
-  \begin{tikzpicture}[remember picture,overlay,line width=0mm,shift=(current page.south west), align=left, font=\sffamily\large]
-    \node[anchor=south west] (meta) at (2.5cm, 2.5cm) {
-      \sups : \itusupervisor \extrasup\\
-      \iflanguage{danish}{Afleveret}{Submitted}: \itudate
-    };
-  \end{tikzpicture}
-
-  \begin{tikzpicture}[remember picture,overlay,line width=0mm,shift=(current page.south east)]
-    \node[anchor=south east] (logo) at (-2.5cm,2.5cm) {
+    \begin{tikzpicture}[remember picture,overlay,line width=0mm,shift=(current page.north)]
+    \node[anchor=north] (logo) at (0cm,-3cm) {
       \iflanguage{danish}{
-        \includegraphics[width=7cm]{dansk}
+        \includegraphics[width=13cm]{dansk}
       }{
-        \includegraphics[width=7cm]{english}
+        \includegraphics[width=13cm]{english}
       }
     };
   \end{tikzpicture}
+  
+  \begin{tikzpicture}[remember picture,overlay,line width=0mm,shift=(current page.center)]
+    \node[align=center,font=\sffamily\Huge] (title) at (0, 5cm){
+      \itutitle
+    };
+    \node[align=center,font=\sffamily\Large] (author) at (0, -3cm){
+      \ituauthor
+    };
+  \end{tikzpicture}
+  \begin{tikzpicture}[remember picture,overlay,line width=0mm,shift=(current page.south), align=center, font=\sffamily\large]
+    \node[anchor=south] (meta) at (0, 3cm) {
+      \sups :\\ \itusupervisor \extrasup\\ \\
+      \iflanguage{danish}{Afleveret}{Submitted}: \\ \itudate
+    };
+  \end{tikzpicture}
+
+
 }
