@@ -14,6 +14,10 @@
     \RequirePackage[danish,english]{babel}
 \fi
 
+%% no indentation on the paragraphs and some space in between paragraphs
+\setlength{\parindent}{0em}
+\setlength{\parskip}{1em}
+
 %% Graphics
 \RequirePackage{tikz}
 \usetikzlibrary{positioning}

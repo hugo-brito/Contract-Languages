@@ -16,7 +16,12 @@
 \newpage
 
 \begin{abstract}
-This is an English abstract. English is the default language of this document.
+We develop, present and explain the work developed around a declarative language for the formalisation of and analysis of contracts. The present has taken inspiration from the available literature on the matter, namely:
+\begin{itemize}
+    \item Andersen, J. (2006). Compositional specification of commercial contracts. \textit{International Journal on Software Tools for Technology Transfer}, 8(6), 485–516. doi: 10.1007/s10009-006-0010-1
+    \item Bahr, P. (2015). Certified symbolic management of financial multi-party contracts. \textit{ACM SIGPLAN Notices, 50(9)}, 315–327. doi: 10.1145/2858949.2784747
+\end{itemize}
+In this paper, starting from a simple example contract, we implement a very simple Contract Specification Language\footnote{\href{https://www.deondigital.com/2019/03/introducing-csl/}{A formal language for contracts: deondigital.com/2019/03/introducing-csl}}, test it and reason about it. The goal is to provide the reader with an introductory view on the matter, as well as laying the foundations for the next step of this process, which will be to use Property-Based Testing\footnote{\href{https://hypothesis.works/articles/what-is-property-based-testing/}{What is Property Based Testing?: hypothesis.works/articles/what-is-property-based-testing}} to improve the necessary computations as well as on contracts built with this tool.
 \end{abstract}
 
 \begin{otherlanguage}{danish}
@@ -42,60 +47,187 @@ This is an English abstract. English is the default language of this document.
 \sloppybottom
 
 \chapter{Introduction}
-	- 15 pg. + 2 pg per group member (19 pg max)
-	- Go for around 17 pages. Should be self-contained, someone who was not in these meetings should be able to understand the report. 
-	- Report should be lean and conrete, it is okay if it takes up less pages.
-	- If unsure about omitting or including stuff in report, can consult them.
-We should start working on sections, so we can get feedback from them as much as possible.
 
--------------------------
+%% Possible commands and headers:
+% (Copied from the original template)
+
+% \originally{History of the Makhnovist Movement; 1923}
+% \joint{Peter Arshinov}
+% \chapter{Something in Between}
+% Somewhere at sometime...
+
+% \section{A Section}
+% \subsection{A Subsection}
+% Some text.
+% \subsubsection{A subsubsection}
+% More text here.
+
+% Here's some verbatim text:
+% \begin{verbatim}
+% data Vect : Nat -> Type -> Type where
+%   Nil : Vect 0 a
+%   (::) : a -> Vect n a -> Vect (1 + n) a
+% \end{verbatim}
+
+% \joint{Emma Goldman}
+% \chapter{At the Same Time Somewhere Else}
+% ... happened something else
+
+% Here's some mathematics:
+% \begin{displaymath}
+%   \frac{
+%     \Gamma, x:\tau_1\;\vdash\; e \;:\; \tau_2
+%   }{
+%     \Gamma\;\vdash\;\lambda x : \tau_1 . e \;:\; \tau_1\to\tau_2}
+% \end{displaymath}
+
+% \originally{My autobiography; 1934}
+% \chapter{Conclusion}
+% Finished
+
+% Report guidelines:
+% \begin{itemize}
+%     \item 15 pg. + 2 pg per group member (19 pg max)
+%     \item Go for around 17 pages. Should be self-contained, someone who was not in these meetings should be able to understand the report. 
+%     \item Report should be lean and concrete, it is okay if it takes up less pages.
+%     \item If unsure about omitting or including stuff in report, can consult them.
+% \end{itemize}
+% We should start working on sections, so we can get feedback from them as much as possible.
+
+% -------------------------
+
+% \begin{itemize}
+%     \item Explain what a contract language is
+%     \item Explain what's out there, in terms of Research
+%     \item What are Contract Languages used for?
+%     \begin{itemize}
+%         \item Use an example as motivation to tell a story
+%         \item Use an example to show how is used and how implemented (doesn't have to be own)
+%         \item tell a story, we want to describe something and why ours looks different (because it explains what it is supposed to express)
+%     \end{itemize}
+% 	\item Show our contract (show the actual contract and explain with code examples how it works)
+% 	\begin{itemize}
+% 	    \item What is our intention of doing it like so?
+% 	    \item Define our language (Evaluation function should do this)
+% 	\end{itemize}
+% 	\item Pick some properties that could be interesting to consider for our language, but do not implement property based testing.
+% \end{itemize}
+
+% A well written F\# (Scala) example should be fine, not necessary to formally define in logic.
 
 
-	- Explain what a contract language is
-	- Explain what's out there, in terms of Research
-	- What are Contract Languages used for?
-		○ Use an example as motivation to tell a story
-		○ Use an example to show how is used and how implemented (doesn't have to be own)
-		○ tell a story, we want to describe something and why ours looks different (because it explains what it is supposed to express)
-	- Show our contract (show the actual contract and explain with code examples how it works)
-		○ What is our intention of doing it like so?
-		○ Define our language (Evalulation function should do this)
-	- Pick some properties that could be interesting to consider for our language, but do not implement property based testing.
-A well written F# (Scala) example should be fine, not necessary to formally define in logic.
 
-\originally{History of the Makhnovist Movement; 1923}
-\joint{Peter Arshinov}
-\chapter{Something in Between}
-Somewhere at sometime...
+This document reports on the work developed in the scope of the \textit{Research Project} course of the Masters in Software Development at the IT University of Copenhagen.\par
 
-\section{A Section}
-\subsection{A Subsection}
-Some text.
-\subsubsection{A subsubsection}
-More text here.
+We will start by laying down the core concepts needed to follow this paper. After, we explain why a Domain-Specific Language, more specifically a Contract-Specification Language, is relevant for modelling our domain and subsequent problems. We finish by presenting our Project Description.
 
-Here's some verbatim text:
-\begin{verbatim}
-data Vect : Nat -> Type -> Type where
-  Nil : Vect 0 a
-  (::) : a -> Vect n a -> Vect (1 + n) a
-\end{verbatim}
+% \item Explain what a contract language is~
+\section{Core concepts}
+\subsection{What is a Domain-Specific Language?}
+% Does it answer the question: What are Contract Languages used for?
 
-\joint{Emma Goldman}
-\chapter{At the Same Time Somewhere Else}
-... happened something else
+% very good explanation on what a https://www.jetbrains.com/mps/concepts/domain-specific-languages/
+A Domain-Specific Language is a programming language tailored to a specific problem domain. Contrary to what happens with a General-Purpose Programming Language, which use is not restricted to a particular type of problem or machine\footnote{\href{https://encyclopedia2.thefreedictionary.com/general-purpose+language}{General-purpose language definition from: thefreedictionary.com/general-purpose+language}}, a DSL is built with the sole purpose of modelling and expressing a specific set of problems.
 
-Here's some mathematics:
-\begin{displaymath}
-  \frac{
-    \Gamma, x:\tau_1\;\vdash\; e \;:\; \tau_2
-  }{
-    \Gamma\;\vdash\;\lambda x : \tau_1 . e \;:\; \tau_1\to\tau_2}
-\end{displaymath}
+By default, it is less complex to use than a General-Purpose Programming Language and it is meant to be developed and used in close contact with domain experts\footnote{\href{https://www.jetbrains.com/mps/concepts/domain-specific-languages/}{Domain-Specific Languages from: jetbrains.com/mps/concepts/domain-specific-languages}}.
 
-\originally{My autobiography; 1934}
+
+    
+\subsection{What is a Contract-Specification Language?}
+A Contract-Specification Language fulfils the criteria of a Domain-Specific Language but it is stricter in the sense that it is part of smaller subset of the DSL's that are built and used in the context of Financial Contracts. This kind of contracts allows for an extreme simplification of the DSL since it does deal with, e.g. perishable goods, etc. By the fact they deal mainly with amounts of money, which does not require, e.g. somewhere to be stored, does not perish, can be easily transferred (does not require transportation), they are simpler to model, reason and work with.
+
+
+\subsection{What is Property-Based Testing?}
+Need to expand on that or perhaps take explanations from below.
+
+
+\section{Motivation}
+Based on our example: *Why a DSL*
+what is it good for in this case?
+
+
+\section{Project Description}
+*Presentation of the problem*\\
+Idea: present our example here
+*example from a paper*
+
+%Copied from the Research Project description:
+\subsection{Problem Domain}
+The general setting we are interested in is the Functional Programming Paradigm, specifically Domain-Specific Languages (DSL) and Property-Based Testing (PBT).\par
+A DSL is a language tailored for writing software that solves problems of a specific domain. PBT assesses whether a function satisfies a formally specified property by randomly generating input.
+Formal Contracts are a particularly well-suited application area, as their nature allows for precise modelling.
+
+
+\subsection{Domain Overview}
+% 1 paragraph outlining the specific problem you are interested in.
+The idea of Formal Contracts described by using a DSL, so-called Contract Languages, has been around since the year $2000$ when Peyton-Jones, Eber \& Seward published the paper: 'Composing Contracts: An Adventure in Financial Engineering'. They have introduced a combinator library which is now widely used throughout the financial industry. Nowadays many banks and financial institutions make use of their implementation of a Contract Language as it enables systematic the analysis of their financial contracts. However, while this is the norm in the financial industry, other industries have yet to realise the potential of Contract Languages.
+
+\subsection{Problem Formulation}
+Starting from a contract described in natural language:
+\begin{itemize}
+    \item Do any parts of the contract promise too much?
+    \item What are the possible ways that this contract can be run?
+    \item What happens if a contract is delivered only partially?% execution of contracts ( and use it to renegotiate a contract of what could follow (rights, money, goods)
+    %\item What would happen if there are mismatches in volumes?
+    %\item How much will it cost the logistics service provider if direct damages or indirect damages occur on the goods?
+    %\item What if the logistics service provider cannot deliver at the right quality (in terms of Key Performance Indicators)? How much is the shipper allowed to withhold of the payment? What if expectations are exceeded? How much is there to be gained?
+    %\item Which events will lead to early termination of the contract? What effect will this have on the logistics service provider?
+\end{itemize}
+
+*Probably need to change this part:*    
+A potential application scenario could be within logistics, where one considers in which circumstances a logistics service provider is able to withhold goods from the recipient. Moreover, if such was to happen, how much cost would be covered by selling the goods?
+    
+
+\subsection{Method}
+\begin{itemize}
+    \item Build a DSL tailored to the above-mentioned contracts.
+    \item Formalise logistics contracts using our DSL.
+    \item Analyse them to answer the questions mentioned in the problem formulation.
+\end{itemize}
+
+
+\section{Deliverables}
+\begin{itemize}
+    \item Report about the work developed
+    \item DSL executable prototype
+\end{itemize}
+
+\vspace{5mm} %10mm vertical space
+
+\section{Thesis follow-up}
+This Research Project lays the foundation for our thesis, which will be on PBT of logistics contracts formalised in our DSL.
+
+
+\chapter{Research}
+% Does it answer the question: Explain what's out there, in terms of Research
+*One of the keypoints of the meetings:\\
+Explain what's out there, in terms of Research*
+
+\chapter{Implementation}
+This chapter is devoted to the code.\par
+Start with a concrete contract in plain English and build code along as we need.\par
+In here we should have snippets of code, annotated with comments that connect the dots between our example contract and the code.\par
+Depending on our example contract, we might also mention some concepts (that are not necessarily code-related, but related to the domain of the contract) that the reader needs to know or be aware of so that the implementation becomes clearer.\par
+Some questions that we would like to have answered here:
+\begin{itemize}
+    \item Why does the code look the way it does?
+    \item What models what and how in our code?
+    \item What isn't modelled and why? (limitations --- basically, what can't be expressed with our contract language)
+\end{itemize}
+
+
+
+\chapter{Testing}
+This chapter is devoted to assessing the correctness of our code.\par
+We plan on having a test suite for our language, but this part of the project is still under development (the actual language comes first).\par
+Things to consider:
+\begin{itemize}
+    \item Language correctness
+    \item Logic inference rules when running the contract (?)
+\end{itemize}
+
+
 \chapter{Conclusion}
-Finished
-
+In this chapter we draw conclusions about the language, the works developed and we look in to the future: the thesis.
 
 \end{document}
