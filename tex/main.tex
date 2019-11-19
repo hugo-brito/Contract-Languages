@@ -21,7 +21,7 @@ We develop, present and explain the work developed around a declarative language
     \item Andersen, J. (2006). Compositional specification of commercial contracts. \textit{International Journal on Software Tools for Technology Transfer}, 8(6), 485–516. doi: 10.1007/s10009-006-0010-1
     \item Bahr, P. (2015). Certified symbolic management of financial multi-party contracts. \textit{ACM SIGPLAN Notices, 50(9)}, 315–327. doi: 10.1145/2858949.2784747
 \end{itemize}
-In this paper, starting from a simple example contract, we implement a very simple Contract Specification Language\footnote{\href{https://www.deondigital.com/2019/03/introducing-csl/}{A formal language for contracts: deondigital.com/2019/03/introducing-csl}}, test it and reason about it. The goal is to provide the reader with an introductory view on the matter, as well as laying the foundations for the next step of this process, which will be to use Property-Based Testing\footnote{\href{https://hypothesis.works/articles/what-is-property-based-testing/}{What is Property Based Testing?: hypothesis.works/articles/what-is-property-based-testing}} to improve the necessary computations as well as on contracts built with this tool.
+In this paper, starting from a simple example contract, we implement a very simple Contract Specification Language\footnote{A formal language for contracts: \url{https://www.deondigital.com/2019/03/introducing-csl/}}, test it and reason about it. The goal is to provide the reader with an introductory view on the matter, as well as laying the foundations for the next step of this process, which will be to use Property-Based Testing\footnote{What is Property Based Testing?:\\ \url{https://hypothesis.works/articles/what-is-property-based-testing/}} to improve the necessary computations as well as on contracts built with this tool.
 \end{abstract}
 
 \begin{otherlanguage}{danish}
@@ -112,96 +112,89 @@ In this paper, starting from a simple example contract, we implement a very simp
 % 	\end{itemize}
 % 	\item Pick some properties that could be interesting to consider for our language, but do not implement property based testing.
 % \end{itemize}
-
+%
 % A well written F\# (Scala) example should be fine, not necessary to formally define in logic.
+In this report we will investigate how to develop our own Contract Language in the domain of a simple exchange of resources. We are doing this to lay the foundation for our thesis, which will be on Property-Based Testing on contracts formalised using a contract language.
 
+We will start by giving a brief introduction to the core concepts of this paper and the problem we are trying to solve. The concept of a Contract Language will be more thoroughly explored in the Methodology section.
 
-
-This document reports on the work developed in the scope of the \textit{Research Project} course of the Masters in Software Development at the IT University of Copenhagen.\par
-
-We will start by laying down the core concepts needed to follow this paper. After, we explain why a Domain-Specific Language, more specifically a Contract-Specification Language, is relevant for modelling our domain and subsequent problems. We finish by presenting our Project Description.
-
-% \item Explain what a contract language is~
-\section{Core concepts}
-\subsection{What is a Domain-Specific Language?}
+% \item Explain what a contract language is
+\section{What is a Domain-Specific Language?}
 % Does it answer the question: What are Contract Languages used for?
 
 % very good explanation on what a https://www.jetbrains.com/mps/concepts/domain-specific-languages/
-A Domain-Specific Language is a programming language tailored to a specific problem domain. Contrary to what happens with a General-Purpose Programming Language, which use is not restricted to a particular type of problem or machine\footnote{\href{https://encyclopedia2.thefreedictionary.com/general-purpose+language}{General-purpose language definition from: thefreedictionary.com/general-purpose+language}}, a DSL is built with the sole purpose of modelling and expressing a specific set of problems.
+A Domain-Specific Language is a programming language tailored to a specific problem domain. Contrary to what happens with a General-Purpose Programming Language, which use is not restricted to a particular type of problem or machine, a DSL is built with the sole purpose of modelling and expressing a specific set of problems \cite{van2000domain}.
 
-By default, it is less complex to use than a General-Purpose Programming Language and it is meant to be developed and used in close contact with domain experts\footnote{\href{https://www.jetbrains.com/mps/concepts/domain-specific-languages/}{Domain-Specific Languages from: jetbrains.com/mps/concepts/domain-specific-languages}}.
+By default, it is less complex to use than a General-Purpose Programming Language and it is meant to be developed and used in close contact with domain experts \cite{dsl}.
 
+\section{What is a Contract Language?}
+A Contract Language is a Domain-Specific Language for Contracts. Unlike most other DSLs the purpose of a Contract Language is to make contracts that can be treated like data, hence it cam be executed several times. Besides this these contracts are subjected to monitoring and various user defined analyses \cite{andersen2006compositional}.
 
-    
-\subsection{What is a Contract-Specification Language?}
-A Contract-Specification Language fulfils the criteria of a Domain-Specific Language but it is stricter in the sense that it is part of smaller subset of the DSL's that are built and used in the context of Financial Contracts. This kind of contracts allows for an extreme simplification of the DSL since it does deal with, e.g. perishable goods, etc. By the fact they deal mainly with amounts of money, which does not require, e.g. somewhere to be stored, does not perish, can be easily transferred (does not require transportation), they are simpler to model, reason and work with.
+Unfortunately, not all contracts can be implemented using a contract language as it requires the given contract to be unambiguous in nature, such as Financial Contracts and in general contracts governing the exchange of resources.
 
+% but it is stricter in the sense that it is part of smaller subset of the DSLs that are built and used only in the context of Contracts. Specifically contracts that tend to be unambiguous in nature, hence Financial Contract, Exchange of Resources etc.
+% This kind of contracts allows for an extreme simplification of the DSL since it does not deal with, e.g. perishable goods, etc. By the fact they deal mainly with amounts of money, which does not require, e.g. somewhere to be stored, does not perish, can be easily transferred (does not require transportation), they are simpler to model, reason and work with.
 
-\subsection{What is Property-Based Testing?}
-Need to expand on that or perhaps take explanations from below.
+\section{What is Property-Based Testing?}
+Property-Based Testing is a combination of White and Black box testing in one. But instead of only testing on the entirety of our program or some subset of it, we manage to do both with PBT. PBT relies on properties to test correctness, instead of an exact specification of what we might expect. It checks that the function, program or in our case a contract abides by the given property. Properties are 'rules' that the output of given program, function or contract should always follow \cite{fink1994towards}.
 
+In this project we are not going to explore property based testing on contracts in detail, as this is the focus of our thesis. We will, however, try to formulate some properties of the contracts that could then be tested on later.
 
-\section{Motivation}
-Based on our example: *Why a DSL*
-what is it good for in this case?
+\section{Problem Formulation}
+The point of this report is for us to gain an understanding of how to implement and use a DSL to describe contracts, with that in mind we aim to do the following:
 
-
-\section{Project Description}
-*Presentation of the problem*\\
-Idea: present our example here
-*example from a paper*
-
-%Copied from the Research Project description:
-\subsection{Problem Domain}
-The general setting we are interested in is the Functional Programming Paradigm, specifically Domain-Specific Languages (DSL) and Property-Based Testing (PBT).\par
-A DSL is a language tailored for writing software that solves problems of a specific domain. PBT assesses whether a function satisfies a formally specified property by randomly generating input.
-Formal Contracts are a particularly well-suited application area, as their nature allows for precise modelling.
-
-
-\subsection{Domain Overview}
-% 1 paragraph outlining the specific problem you are interested in.
-The idea of Formal Contracts described by using a DSL, so-called Contract Languages, has been around since the year $2000$ when Peyton-Jones, Eber \& Seward published the paper: 'Composing Contracts: An Adventure in Financial Engineering'. They have introduced a combinator library which is now widely used throughout the financial industry. Nowadays many banks and financial institutions make use of their implementation of a Contract Language as it enables systematic the analysis of their financial contracts. However, while this is the norm in the financial industry, other industries have yet to realise the potential of Contract Languages.
-
-\subsection{Problem Formulation}
-Starting from a contract described in natural language:
 \begin{itemize}
-    \item Do any parts of the contract promise too much?
-    \item What are the possible ways that this contract can be run?
-    \item What happens if a contract is delivered only partially?% execution of contracts ( and use it to renegotiate a contract of what could follow (rights, money, goods)
-    %\item What would happen if there are mismatches in volumes?
-    %\item How much will it cost the logistics service provider if direct damages or indirect damages occur on the goods?
-    %\item What if the logistics service provider cannot deliver at the right quality (in terms of Key Performance Indicators)? How much is the shipper allowed to withhold of the payment? What if expectations are exceeded? How much is there to be gained?
-    %\item Which events will lead to early termination of the contract? What effect will this have on the logistics service provider?
+    \item Gain insight to the literature in this area along with what kind of contracts one can implement.
+    \item Create a working prototype of our Contract Language.
+    \item Be able to do simple analysis on the language
+    \item Find some properties that should hold true for the language.
 \end{itemize}
 
-*Probably need to change this part:*    
-A potential application scenario could be within logistics, where one considers in which circumstances a logistics service provider is able to withhold goods from the recipient. Moreover, if such was to happen, how much cost would be covered by selling the goods?
-    
+Adding to this we are also trying to figure out the benefit of contract languages.
 
-\subsection{Method}
-\begin{itemize}
-    \item Build a DSL tailored to the above-mentioned contracts.
-    \item Formalise logistics contracts using our DSL.
-    \item Analyse them to answer the questions mentioned in the problem formulation.
-\end{itemize}
+% Starting from a contract described in natural language:
+% \begin{itemize}
+%     \item Do any parts of the contract promise too much?
+%     \item What are the possible ways that this contract can be run?
+%     \item What happens if a contract is delivered only partially?% execution of contracts ( and use it to renegotiate a contract of what could follow (rights, money, goods)
+%     %\item What would happen if there are mismatches in volumes?
+%     %\item How much will it cost the logistics service provider if direct damages or indirect damages occur on the goods?
+%     %\item What if the logistics service provider cannot deliver at the right quality (in terms of Key Performance Indicators)? How much is the shipper allowed to withhold of the payment? What if expectations are exceeded? How much is there to be gained?
+%     %\item Which events will lead to early termination of the contract? What effect will this have on the logistics service provider?
+% \end{itemize}
 
-
-\section{Deliverables}
-\begin{itemize}
-    \item Report about the work developed
-    \item DSL executable prototype
-\end{itemize}
+% *Probably need to change this part:*    
+% A potential application scenario could be within logistics, where one considers in which circumstances a logistics service provider is able to withhold goods from the recipient. Moreover, if such was to happen, how much cost would be covered by selling the goods?
 
 \vspace{5mm} %10mm vertical space
 
-\section{Thesis follow-up}
-This Research Project lays the foundation for our thesis, which will be on PBT of logistics contracts formalised in our DSL.
-
-
-\chapter{Research}
+\chapter{Methodology}
 % Does it answer the question: Explain what's out there, in terms of Research
-*One of the keypoints of the meetings:\\
-Explain what's out there, in terms of Research*
+% *One of the keypoints of the meetings:\\
+% Explain what's out there, in terms of Research*
+
+% Explain the approach to our paper, how did we make the language and how did we get there.
+
+In this paper we use the inductive approach to determine how to develop our Contract Language. This section will explore what research we have been through to give an understanding of our process and why our implementation looks the way it does.
+
+\section{Research}
+DSLs have been around almost as long as the the existence of humans, as we always find a way to simplify language within certain domains. Musicians use musical notation, lawyers use legal-language and we programmers use code. Nowadays most programmers use general purpose languages that might contain DSLs to make the solving of certain problems easier, whereas older languages such as Cobol were made as dedicated languages to solve a certain range of problems \cite{van2000domain}.
+
+However, the idea of using a DSL to give a formal description to financial contracts in code, where not introduced until the 2000's by Peyton-Jones, Eber \& Seward. They specifically explored how to express Financial Contracts, such as bonds, stocks etc. and even made a combinator library \cite{peyton2000composing}. This type of DSL is known as a Contract Language. To this day Contract Languages are still most commonly used in the domain of the Financial industry. One of the first companies to utilise this was LexiFi which has since been followed by most banks and other companies such as SimCorp.
+
+---- Other Research papers read to be included ----
+
+There have been made a general contract language that can encompass more than just financial contracts, by extending the language of Peyton-Jones, Eber \& Seward. This language formalises contracts governing the exchange of resources, hence it encompasses the exchange of money, goods and services among multiple parties \cite{andersen2006compositional}. Fritz Henglein then went on to create a company called Deon Digital based on this paper, which have provided us with valuable guidance in how to make our own Contract Language. Our implementation of the Contract Language itself will be following the ideas from this paper quite closely.
+
+\section{Why a DSL for Contracts?}
+% Motivation section
+% Use an example to show how is used and how implemented (doesn't have to be own) 
+% Based on an example: *Why a DSL*
+% what is it good for in this case?
+
+This part will elaborate on the benefits of making a contract as a DSL. After it will use an example from a paper to show how it is used and implemented.
+
+% Nowadays many banks and financial institutions make use of their implementation of a Contract Language as it enables systematic the analysis of their financial contracts. However, while this is the norm in the financial industry, other industries have yet to realise the potential of Contract Languages.
 
 \chapter{Implementation}
 This chapter is devoted to the code.\par
@@ -216,8 +209,8 @@ Some questions that we would like to have answered here:
 \end{itemize}
 
 
-
 \chapter{Testing}
+This chapter will be included if we have time for it.
 This chapter is devoted to assessing the correctness of our code.\par
 We plan on having a test suite for our language, but this part of the project is still under development (the actual language comes first).\par
 Things to consider:
@@ -229,5 +222,9 @@ Things to consider:
 
 \chapter{Conclusion}
 In this chapter we draw conclusions about the language, the works developed and we look in to the future: the thesis.
+
+
+\bibliographystyle{apalike}
+\bibliography{references}
 
 \end{document}

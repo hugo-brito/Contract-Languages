@@ -53,6 +53,21 @@
 
 % referrencing websites
 \usepackage{hyperref}
+% url fonts
+\urlstyle{sf}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % Bibliography package:
+% \RequirePackage[
+% backend=biber,
+% style=alphabetic,
+% citestyle=authoryear
+% ]{biblatex}
+
+% \addbibresource{references.bib} %Imports bibliography file
+% % https://www.overleaf.com/learn/latex/Biblatex_citation_styles
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Code formatting   
 \usepackage{listings}
@@ -159,7 +174,7 @@
 \chapterstyle{ituchapter} % try also: default , section , hangnum , companion , article, demo
 
 % do not draw a line to separate footnotes, instead use more spacing
-\renewcommand*{\footnoterule}{\vskip 10pt}
+% \renewcommand*{\footnoterule}{\vskip 10pt}
 
 
 %% Section headers sans serif
