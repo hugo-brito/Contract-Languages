@@ -28,7 +28,7 @@ object Resource extends App {
     case object Succ extends Contract {
         def succCheck (c: Contract): Boolean = c match {
             case Succ => true
-            case _ 	 => false
+            case _ 	  => false
         }
     }
     case object Fail extends Contract
@@ -36,8 +36,8 @@ object Resource extends App {
     // Evaluator function
     def evalC (e: Event) (c: Contract) :Contract = c match {
         case Atom(f)        => if (f(e)) Succ else Fail
-        case Then(c1,c2)    => if (Succ.succCheck (evalC (e) (c1))) c2 else Fail
-        case Or(c1,c2)      => if (succCheck (evalC (e) (c1))) evalC (e) (c1) else evalC (e) (c2)
+        case Then(c1,c2)    => if (Succ.succCheck (evalC (e) (c1))) c2 else evalC (e) (c1)
+        case Or(c1,c2)      => if (Succ.succCheck (evalC (e) (c1))) evalC (e) (c1) else evalC (e) (c2)
         case Succ | Fail    => Fail
     }
 
