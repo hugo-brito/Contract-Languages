@@ -37,9 +37,7 @@ object Resource extends App {
     def evalC (e: Event) (c: Contract) :Contract = c match {
         case Atom(f)        => if (f(e)) Succ else Fail
         case Then(c1,c2)    => if (Succ.succCheck (evalC (e) (c1))) c2 else Fail
-        case Or(c1,_) if (Succ.succCheck (evalC (e) (c1))) => Succ
-        case Or(_,c2) if (Succ.succCheck (evalC (e) (c2))) => Succ
-        case Or(_,_)        => Fail
+        case Or(c1,c2)      => if (succCheck (evalC (e) (c1))) evalC (e) (c1) else evalC (e) (c2)
         case Succ | Fail    => Fail
     }
 
