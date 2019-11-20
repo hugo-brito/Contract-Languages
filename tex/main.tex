@@ -125,10 +125,10 @@ We will start by giving a brief introduction to the core concepts of this paper 
 % very good explanation on what a https://www.jetbrains.com/mps/concepts/domain-specific-languages/
 A Domain-Specific Language is a programming language tailored to a specific problem domain. Contrary to what happens with a General-Purpose Programming Language, which use is not restricted to a particular type of problem or machine, a DSL is built with the sole purpose of modelling and expressing a specific set of problems \cite{van2000domain}.
 
-By default, it is less complex to use than a General-Purpose Programming Language and it is meant to be developed and used in close contact with domain experts \cite{dsl}.
+By default, it is less complex to use than a General-Purpose Programming Language and it is meant to be developed in close contact with domain experts, as ultimately these will constitute its users \cite{dsl}.
 
 \section{What is a Contract Language?}
-A Contract Language is a Domain-Specific Language for Contracts. Unlike most other DSLs the purpose of a Contract Language is to make contracts that can be treated like data, hence it cam be executed several times. Besides this these contracts are subjected to monitoring and various user defined analyses \cite{andersen2006compositional}.
+A Contract Language is a Domain-Specific Language for Contracts. Unlike most other DSLs the purpose of a Contract Language is to make contracts that can be treated like data, hence it cam be executed several times. Besides this, these contracts are subjected to monitoring and various user defined analyses \cite{andersen2006compositional}.
 
 Unfortunately, not all contracts can be implemented using a contract language as it requires the given contract to be unambiguous in nature, such as Financial Contracts and in general contracts governing the exchange of resources.
 
@@ -138,10 +138,10 @@ Unfortunately, not all contracts can be implemented using a contract language as
 \section{What is Property-Based Testing?}
 Property-Based Testing is a combination of White and Black box testing in one. But instead of only testing on the entirety of our program or some subset of it, we manage to do both with PBT. PBT relies on properties to test correctness, instead of an exact specification of what we might expect. It checks that the function, program or in our case a contract abides by the given property. Properties are 'rules' that the output of given program, function or contract should always follow \cite{fink1994towards}.
 
-In this project we are not going to explore property based testing on contracts in detail, as this is the focus of our thesis. We will, however, try to formulate some properties of the contracts that could then be tested on later.
+In this project we are not going to explore property based testing on contracts in detail, as this is the focus of our thesis. We will, however, try to formulate some properties of the contracts that could then be later tested on.
 
 \section{Problem Formulation}
-The point of this report is for us to gain an understanding of how to implement and use a DSL to describe contracts, with that in mind we aim to do the following:
+The point of this report is for us to gain an understanding of how to implement and use a DSL to describe contracts. With that in mind we aim to do the following:
 
 \begin{itemize}
     \item Gain insight to the literature in this area along with what kind of contracts one can implement.
@@ -224,7 +224,10 @@ Things to consider:
 In this chapter we draw conclusions about the language, the works developed and we look in to the future: the thesis.
 
 
+
 \bibliographystyle{apalike}
 \bibliography{references}
+\printbibliography
+
 
 \end{document}

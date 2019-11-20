@@ -56,8 +56,9 @@
 % url fonts
 \urlstyle{sf}
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Bibliography package:
+
 % \RequirePackage[
 % backend=biber,
 % style=alphabetic,
@@ -65,9 +66,9 @@
 % ]{biblatex}
 
 % \addbibresource{references.bib} %Imports bibliography file
-% % https://www.overleaf.com/learn/latex/Biblatex_citation_styles
+% https://www.overleaf.com/learn/latex/Biblatex_citation_styles
 
-% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Code formatting   
 \usepackage{listings}
