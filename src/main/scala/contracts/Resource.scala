@@ -36,8 +36,31 @@ object Resource extends App {
     // Evaluator function
     def evalC (e: Event) (c: Contract) :Contract = c match {
         case Atom(f)        => if (f(e)) Succ else Fail
-        case Then(c1,c2)    => if (Succ.succCheck (evalC (e) (c1))) c2 else evalC (e) (c1)
-        case Or(c1,c2)      => if (Succ.succCheck (evalC (e) (c1))) evalC (e) (c1) else evalC (e) (c2)
+        case Then(c1,c2)    => {
+            val evalC1 = evalC (e) (c1)
+            val evalC2 = evalC (e) (c2)
+            evalC1 match {
+                case Fail => Fail
+                case _    => 
+            }
+            // missing implementation
+        case Or(c1,c2)      => {
+            val evalC1 = evalC (e) (c1)
+            evalC1 match {
+                case Fail => evalC (e) (c2) // check if the left hand side doesn't fail, if it doesn't proceed with the right-hand side
+                case _    => evalC1
+            }
+        case And(c1,c2)     => {
+            val evalC1 = evalC (e) (c1)
+            val evalC2 = evalC (e) (c2)
+            evalC1 match {
+                case Fail => Fail
+                case _    => evalC2 match {
+                    case Fail => Fail
+                    case _    => // need to combine them 
+                }
+            }
+        }
         case Succ | Fail    => Fail
     }
 
