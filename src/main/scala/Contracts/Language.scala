@@ -17,8 +17,7 @@ object Language extends App {
         def diff (that :Date, unit: String) = 
             this.date.until(that.date, ChronoUnit.valueOf(unit)) // unit should be capital
 
-        def -(that: Date) =
-            that.date.until(this.date, ChronoUnit.valueOf("DAYS"))
+        def -(that: Date) = that.date.until(this.date, ChronoUnit.valueOf("DAYS"))
         
         def +(days: Long) = this.date plus(days, ChronoUnit.valueOf("DAYS"))
     }

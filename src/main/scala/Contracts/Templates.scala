@@ -1,10 +1,9 @@
+package Contracts
 
-// package Contracts
+import java.time.LocalDateTime;
+import Language._
 
-// import java.time.LocalDateTime;
-// import Language._
-
-// object Templates extends App {
+object Templates extends App {
 
 //     def total(sb: ShoppingCart) : Int = {
 //         def rHelper (l: List[Item]) (acc: Int) = 
@@ -29,4 +28,4 @@
 // //     // val buyBike = orderPayDelivery (hugo) (jonas) (10) ("bike")
 
 // //     // evalC (orderBike) (buyBike)
-// }
+}

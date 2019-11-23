@@ -6,7 +6,8 @@ import org.scalacheck.Gen
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 
-import contracts.Resource._ // getting the DSL imported language in
+import Contracts.Language._ // getting the DSL imported language in
+import Contracts.Templates._
 
 class ResourceTestSpec extends FreeSpec with Matchers with PropertyChecks {
   // still need to work on these.
