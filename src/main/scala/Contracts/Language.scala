@@ -12,6 +12,10 @@ object Language extends App {
     case class Item(name: String, value: Int) extends Resource
     case class MonetaryValue(amount: Int) extends Resource
     case class ShoppingCart(items: List[Item]) extends Resource
+    case class Invoice(seller: Agent, buyer: Agent, total: Int, issue: Date, due: Date) extends Resource
+
+    sealed trait time
+    case class Hour(no: Int, unit: String) extends time
 
     case class Date (date: LocalDateTime){
         def diff (that :Date, unit: String) = 
@@ -38,7 +42,7 @@ object Language extends App {
         def +(that: Contract) = Union(this, that)
         def next(that: Contract) = Seq(this, that)
     }
-    case class Atom(val f: Transaction => Boolean) extends Contract 
+    case class Atom(val f: Transaction => Boolean) extends Contract
     case class Seq(val c1: Contract, val c2: Contract) extends Contract 
     case class Or(val c1: Contract, val c2: Contract) extends Contract
     case class Union(val c1: Contract, val c2: Contract) extends Contract
