@@ -44,43 +44,40 @@ object Language extends App {
     // Evaluator function
     def evalC (e: Transaction) (c: Contract) :Contract = { 
 
-        def reduceOr (c1: Contract) (c2: Contract): Contract = 
-            c1 match {
-                case c if (c == c1) => c2 // check if the left hand side doesn't fail, if it doesn't proceed with the right-hand side
+        def reduceOr (c1: Contract, c2: Contract): Contract = {
+            val evalC1 = evalC (e) (c1)
+            lazy val evalC2 = evalC (e) (c2)
+            evalC1 match {
+                case Fail => evalC2
                 case _ => c1
             }
+        }
 
-        def reduceThen (a: Contract) (c: Contract) :Contract = 
-            a match {
+        def reduceThen (a: Atom, c: Contract) :Contract = {
+            val reducedA = evalC (e) (a)
+            reducedA match {
                 case Succ => c
                 case _ => Fail
             }
+        }
+        
+        def reduceUnion (c1: Contract,c2: Contract) : Contract = {
+            val evalC1 = evalC (e) (c1)
+            val evalC2 = evalC (e) (c2)
+            (evalC1, evalC2) match {
+                    case (Fail, Fail)   => Fail
+                    case (Succ, Succ)   => Succ
+                    case (Fail, _)      => Union(c1, evalC2)
+                    case (_, Fail)      => Union(evalC1, c2)
+                    case (_,_)          => Union(evalC1, evalC2)
+            }
+        }
 
         c match {
-            case Atom(f)        => if (f(e)) Succ else c
-            case Or(c1,c2)      => {
-                val evalC1 = evalC (e) (c1)
-                val evalC2 = evalC (e) (c2)
-                (evalC1, evalC2) match {
-                    case (cl,cr) if (c1 == cl && c2 == cr) => Or(cl,cr)
-                    case (cl,cr) if (c2 == cr) => cl
-                    case (cl,cr) if (c1 == cl) => cr
-                    case (cl,cr) => cl
-                } 
-            }
-            case Then(a,c)      => reduceThen (evalC (e) (a)) (c)
-            case Union(c1,c2)   => {
-                val evalC1 = evalC (e) (c1)
-                val evalC2 = evalC (e) (c2)
-                (evalC1, evalC2) match {
-                    case (Succ, Fail)   => c2
-                    case (Fail, Succ)   => c1
-                    case (Succ, Succ)   => Succ
-                    case (Fail, Fail)   => Union(c1,c2)
-                    case (Succ, _)      => evalC2
-                    case (_,_)          => Union(evalC1, evalC2)
-                }
-            }
+            case Atom(f)        => if (f(e)) Succ else Fail
+            case Or(c1,c2)      => reduceOr (c1,c2)
+            case Then(a,c)      => reduceThen (a,c)
+            case Union(c1,c2)   => reduceUnion(c1,c2)
             case Succ           => Succ
             case Fail           => Fail
         }
