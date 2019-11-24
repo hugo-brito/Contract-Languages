@@ -13,11 +13,11 @@ object Language extends App {
     case class MonetaryValue(amount: Int) extends Resource
     case class ShoppingCart(items: List[Item]) extends Resource
 
-    case class Date (date: LocalDateTime){
+    case class Date(date: LocalDateTime){
         def diff (that :Date, unit: String) = 
-            this.date.until(that.date, ChronoUnit.valueOf(unit)) // unit should be capital
+            this.date.until(that.date, ChronoUnit.valueOf(unit)) // Specify the unit of time using upper case
 
-        def -(that: Date) = that.date.until(this.date, ChronoUnit.valueOf("DAYS"))
+        def -(that: Date) = that.date.until(this.date, ChronoUnit.valueOf("DAYS")) // outputs a new date with the given number of days subtracted
         
         def +(days: Long) = this.date plus(days, ChronoUnit.valueOf("DAYS"))
     }
@@ -30,7 +30,16 @@ object Language extends App {
     }
     
     // Transaction type
-    case class Transaction(a1: Agent, a2: Agent, resource: Resource, timeStamp: Date)
+    case class Transaction(instigator: Agent, recipient: Agent, resource: Resource, timeStamp: Date, isAnOrder = false: Boolean, isAReturn = false: Boolean)
+    object Transaction {
+        def Order(instigator: Agent, recipient: Agent, resource: Resource, timeStamp: Date): Transaction =
+            new Transaction(instigator, recipient, resource: Resource, timeStamp: Date, true, false)
+            // could be nice to enforce that orders could only be on items or shopping cart
+        def Return(instigator: Agent, recipient: Agent, resource: Resource, timeStamp: Date): Transaction =
+            new Transaction(instigator, recipient, resource: Resource, timeStamp: Date, false, true)
+            // This way, both the buyer and the seller can return the items and the amount that refers to the purchase
+    }
+
 
     // Contract type
     sealed trait Contract
@@ -49,7 +58,7 @@ object Language extends App {
             lazy val evalC2 = evalC (e) (c2)
             evalC1 match {
                 case Fail => evalC2
-                case _ => c1
+                case _    => c1
             }
         }
 
@@ -77,9 +86,9 @@ object Language extends App {
             case Atom(f)        => if (f(e)) Succ else Fail
             case Or(c1,c2)      => reduceOr (c1,c2)
             case Then(a,c)      => reduceThen (a,c)
-            case Union(c1,c2)   => reduceUnion(c1,c2)
+            case Union(c1,c2)   => reduceUnion (c1,c2)
             case Succ           => Succ
-            case Fail           => Fail
+            case Fail           => Fail // contract template can specify when it should fail
         }
     }
 }
