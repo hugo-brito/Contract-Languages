@@ -30,7 +30,7 @@ object Language extends App {
     }
     
     // Transaction type
-    case class Transaction(instigator: Agent, recipient: Agent, resource: Resource, timeStamp: Date, isAnOrder = false: Boolean, isAReturn = false: Boolean)
+    case class Transaction(instigator: Agent, recipient: Agent, resource: Resource, timeStamp: Date, isAnOrder: Boolean = false, isAReturn: Boolean = false)
     object Transaction {
         def Order(instigator: Agent, recipient: Agent, resource: Resource, timeStamp: Date): Transaction =
             new Transaction(instigator, recipient, resource: Resource, timeStamp: Date, true, false)
@@ -90,5 +90,14 @@ object Language extends App {
             case Succ           => Succ
             case Fail           => Fail // contract template can specify when it should fail
         }
+    }
+
+    def prettyPrinting (c: Contract): Unit = c match {
+        case Atom(f)        => print(f)
+        case Or(c1,c2)      => print("OR: " + prettyPrinting(c1) + " is satisfied or " + prettyPrinting(c2) + " is satisfied\n")
+        case Then(a,c)      => print("THEN: First " + prettyPrinting(a) + " must be satistied and then " + prettyPrinting(c) + " must be satified\n")
+        case Union(c1,c2)   => print("UNION: awaiting matching events in no particular order for " + prettyPrinting(c1) + " and " + prettyPrinting(c2) + "\n")
+        case Succ           => println("SUCCESS")
+        case Fail           => println("BREACHED CONTRACT")
     }
 }
