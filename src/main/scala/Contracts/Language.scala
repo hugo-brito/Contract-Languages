@@ -29,13 +29,17 @@ object Language extends App {
             new Date(LocalDateTime.now())
     }
     
-    // Transaction type
+    // Event type
     case class Transaction(a1: Agent, a2: Agent, resource: Resource, timeStamp: Date)
 
     // Contract type
-    sealed trait Contract
+    sealed trait Contract {
+        def ||(that: Contract) = Or(this, that)
+        def +(that: Contract) = Union(this, that)
+        def next(that: Contract) = Seq(this, that)
+    }
     case class Atom(val f: Transaction => Boolean) extends Contract 
-    case class Then(val c1: Atom, val c2: Contract) extends Contract 
+    case class Seq(val c1: Contract, val c2: Contract) extends Contract 
     case class Or(val c1: Contract, val c2: Contract) extends Contract
     case class Union(val c1: Contract, val c2: Contract) extends Contract
     case object Succ extends Contract
@@ -53,11 +57,12 @@ object Language extends App {
             }
         }
 
-        def reduceThen (a: Atom, c: Contract) :Contract = {
-            val reducedA = evalC (e) (a)
-            reducedA match {
-                case Succ => c
-                case _ => Fail
+        def reduceSeq (c1: Contract, c2: Contract): Contract = {
+            val resc1 = evalC (e) (c1)
+            resc1 match {
+                case Fail => Fail
+                case Succ => c2
+                case _ => resc1 next c2
             }
         }
         
@@ -67,17 +72,17 @@ object Language extends App {
             (evalC1, evalC2) match {
                     case (Fail, Fail)   => Fail
                     case (Succ, Succ)   => Succ
-                    case (Fail, _)      => Union(c1, evalC2)
-                    case (_, Fail)      => Union(evalC1, c2)
-                    case (_,_)          => Union(evalC1, evalC2)
+                    case (Fail, _)      => c1 + evalC2
+                    case (_, Fail)      => evalC1 + c2
+                    case (_,_)          => evalC1 + evalC2
             }
         }
 
         c match {
             case Atom(f)        => if (f(e)) Succ else Fail
             case Or(c1,c2)      => reduceOr (c1,c2)
-            case Then(a,c)      => reduceThen (a,c)
-            case Union(c1,c2)   => reduceUnion(c1,c2)
+            case Seq(c1,c2)     => reduceSeq (c1,c2)
+            case Union(c1,c2)   => reduceUnion (c1,c2)
             case Succ           => Succ
             case Fail           => Fail
         }
