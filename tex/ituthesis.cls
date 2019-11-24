@@ -6,6 +6,8 @@
 
 \RequirePackage{ifxetex}
 
+\RequirePackage{tcolorbox}
+
 \ifxetex
     \RequirePackage{polyglossia}
     \setdefaultlanguage{english}

@@ -16,12 +16,8 @@
 \newpage
 
 \begin{abstract}
-We develop, present and explain the work developed around a declarative language for the formalisation of and analysis of contracts. The present has taken inspiration from the available literature on the matter, namely:
-\begin{itemize}
-    \item Andersen, J. (2006). Compositional specification of commercial contracts. \textit{International Journal on Software Tools for Technology Transfer}, 8(6), 485–516. doi: 10.1007/s10009-006-0010-1
-    \item Bahr, P. (2015). Certified symbolic management of financial multi-party contracts. \textit{ACM SIGPLAN Notices, 50(9)}, 315–327. doi: 10.1145/2858949.2784747
-\end{itemize}
-In this paper, starting from a simple example contract, we implement a very simple Contract Specification Language\footnote{A formal language for contracts: \url{https://www.deondigital.com/2019/03/introducing-csl/}}, test it and reason about it. The goal is to provide the reader with an introductory view on the matter, as well as laying the foundations for the next step of this process, which will be to use Property-Based Testing\footnote{What is Property Based Testing?:\\ \url{https://hypothesis.works/articles/what-is-property-based-testing/}} to improve the necessary computations as well as on contracts built with this tool.
+We develop, present and explain the work developed around a declarative language for the formalisation of and analysis of contracts. The present has taken inspiration from the available literature on the matter.
+In this paper, starting from a simple example contract, we implement a very simple Contract Specification Language\footnote{A formal language for contracts: \url{https://www.deondigital.com/2019/03/introducing-csl/}}, test it and reason about it. The goal is to provide the reader with an introductory view on the topic, as well as laying the foundations for the next step of this process, which will be to use Property-Based Testing\footnote{What is Property Based Testing?:\\ \url{https://hypothesis.works/articles/what-is-property-based-testing/}} to improve the necessary computations as well as on contracts built with this tool.
 \end{abstract}
 
 \begin{otherlanguage}{danish}
@@ -114,7 +110,7 @@ In this paper, starting from a simple example contract, we implement a very simp
 % \end{itemize}
 %
 % A well written F\# (Scala) example should be fine, not necessary to formally define in logic.
-In this report we will investigate how to develop our own Contract Language in the domain of a simple exchange of resources. We are doing this to lay the foundation for our thesis, which will be on Property-Based Testing on contracts formalised using a contract language.
+In this report we will investigate how to develop our own contract language in the domain of a simple exchange of resources. We are doing this to lay the foundation for our thesis, which will be on Property-Based Testing on contracts formalised using a contract language.
 
 We will start by giving a brief introduction to the core concepts of this paper and the problem we are trying to solve. The concept of a Contract Language will be more thoroughly explored in the Methodology section.
 
@@ -123,29 +119,38 @@ We will start by giving a brief introduction to the core concepts of this paper 
 % Does it answer the question: What are Contract Languages used for?
 
 % very good explanation on what a https://www.jetbrains.com/mps/concepts/domain-specific-languages/
-A Domain-Specific Language is a programming language tailored to a specific problem domain. Contrary to what happens with a General-Purpose Programming Language, which use is not restricted to a particular type of problem or machine, a DSL is built with the sole purpose of modelling and expressing a specific set of problems \cite{van2000domain}.
+A \textit{domain-specific language} (from now on DSL) is a programming language tailored to a specific problem domain. Contrary to what happens with a general-purpose programming language, which use is not restricted to a particular type of problem or machine, a DSL is built with the sole purpose of modelling and expressing a specific set of problems \cite{van2000domain}.
 
 By default, it is less complex to use than a General-Purpose Programming Language and it is meant to be developed in close contact with domain experts, as ultimately these will constitute its users \cite{dsl}.
 
 \section{What is a Contract Language?}
-A Contract Language is a Domain-Specific Language for Contracts. Unlike most other DSLs the purpose of a Contract Language is to make contracts that can be treated like data, hence it cam be executed several times. Besides this, these contracts are subjected to monitoring and various user defined analyses \cite{andersen2006compositional}.
+A contract language is a \textit{domain-specific language} for contracts. Unlike most other DSLs the purpose of a contract language is to make contracts that can be treated like data, hence it cam be executed several times. Besides this, these contracts are subjected to monitoring and various user defined analyses \cite{andersen2006compositional}.
 
-Unfortunately, not all contracts can be implemented using a contract language as it requires the given contract to be unambiguous in nature, such as Financial Contracts and in general contracts governing the exchange of resources.
+Unfortunately, not all contracts can be implemented using a contract language as it requires the given contract to be unambiguous in nature, such as financial contracts and in general contracts governing the exchange of resources.
 
 % but it is stricter in the sense that it is part of smaller subset of the DSLs that are built and used only in the context of Contracts. Specifically contracts that tend to be unambiguous in nature, hence Financial Contract, Exchange of Resources etc.
 % This kind of contracts allows for an extreme simplification of the DSL since it does not deal with, e.g. perishable goods, etc. By the fact they deal mainly with amounts of money, which does not require, e.g. somewhere to be stored, does not perish, can be easily transferred (does not require transportation), they are simpler to model, reason and work with.
 
 \section{What is Property-Based Testing?}
-Property-Based Testing is a combination of White and Black box testing in one. But instead of only testing on the entirety of our program or some subset of it, we manage to do both with PBT. PBT relies on properties to test correctness, instead of an exact specification of what we might expect. It checks that the function, program or in our case a contract abides by the given property. Properties are 'rules' that the output of given program, function or contract should always follow \cite{fink1994towards}.
+Testing is an important step when making any piece of software available to the general public. It helps saving money, enforces safety, and improves product quality and customer satisfaction. % source: https://www.testdevlab.com/blog/2018/07/importance-of-software-testing/
+Classical techniques to achieve this purpose include white and black box testing. % source: https://usersnap.com/blog/software-testing-basics/
+In order to understand the advantages and major differences between the most common ways of testing software and property-based testing, it is important to mention the principles in which the previous operate.
+\begin{itemize}
+    \item Black-box testing takes a piece of software as a black box: it inputs some data and knows beforehand what should the output be. It does not need to know the source code as it does not care how the software achieves the result. It focuses on functionality. % source: https://usersnap.com/blog/software-testing-basics/
+    \item White-box testing requires access to the source code and tests the internal structures of a software. It checks for branches, statement and decision coverage, among others. The goal is to understand which line of the code is being executed and identify how the execution of the software can branch and what the correct output should be. % source: Williams, Laurie. "White-Box Testing" (PDF): 60–61, 69.
+    % https://students.cs.byu.edu/~cs340ta/spring2019/readings/WhiteBox.pdf
+\end{itemize}
 
-In this project we are not going to explore property based testing on contracts in detail, as this is the focus of our thesis. We will, however, try to formulate some properties of the contracts that could then be later tested on.
+Property-Based Testing (from now on PBT) takes testing to another level. It can be understood as a combination of white and black-box testing, but instead of testing either on the entirety of an application or some subset of it, it does both. PBT relies on properties (instead of concrete inputs) to test correctness. It checks that the function, program or in our case a contract abides by the given property. Properties are "rules" that the output of given program, function or contract should always follow \cite{fink1994towards}.
+
+In this project we are not going to explore PBT on contracts in detail, as this is the focus of our thesis. We will, however, try to formulate some properties of the contracts that could then be later tested on.
 
 \section{Problem Formulation}
 The point of this report is for us to gain an understanding of how to implement and use a DSL to describe contracts. With that in mind we aim to do the following:
 
 \begin{itemize}
     \item Gain insight to the literature in this area along with what kind of contracts one can implement.
-    \item Create a working prototype of our Contract Language.
+    \item Create a working prototype of our contract language.
     \item Be able to do simple analysis on the language
     \item Find some properties that should hold true for the language.
 \end{itemize}
@@ -166,8 +171,6 @@ Adding to this we are also trying to figure out the benefit of contract language
 % *Probably need to change this part:*    
 % A potential application scenario could be within logistics, where one considers in which circumstances a logistics service provider is able to withhold goods from the recipient. Moreover, if such was to happen, how much cost would be covered by selling the goods?
 
-\vspace{5mm} %10mm vertical space
-
 \chapter{Methodology}
 % Does it answer the question: Explain what's out there, in terms of Research
 % *One of the keypoints of the meetings:\\
@@ -177,14 +180,14 @@ Adding to this we are also trying to figure out the benefit of contract language
 
 In this paper we use the inductive approach to determine how to develop our Contract Language. This section will explore what research we have been through to give an understanding of our process and why our implementation looks the way it does.
 
-\section{Research}
+\section{Background}
 DSLs have been around almost as long as the the existence of humans, as we always find a way to simplify language within certain domains. Musicians use musical notation, lawyers use legal-language and we programmers use code. Nowadays most programmers use general purpose languages that might contain DSLs to make the solving of certain problems easier, whereas older languages such as Cobol were made as dedicated languages to solve a certain range of problems \cite{van2000domain}.
 
 However, the idea of using a DSL to give a formal description to financial contracts in code, where not introduced until the 2000's by Peyton-Jones, Eber \& Seward. They specifically explored how to express Financial Contracts, such as bonds, stocks etc. and even made a combinator library \cite{peyton2000composing}. This type of DSL is known as a Contract Language. To this day Contract Languages are still most commonly used in the domain of the Financial industry. One of the first companies to utilise this was LexiFi which has since been followed by most banks and other companies such as SimCorp.
 
 ---- Other Research papers read to be included ----
 
-There have been made a general contract language that can encompass more than just financial contracts, by extending the language of Peyton-Jones, Eber \& Seward. This language formalises contracts governing the exchange of resources, hence it encompasses the exchange of money, goods and services among multiple parties \cite{andersen2006compositional}. Fritz Henglein then went on to create a company called Deon Digital based on this paper, which have provided us with valuable guidance in how to make our own Contract Language. Our implementation of the Contract Language itself will be following the ideas from this paper quite closely.
+There have been made a general contract language that can encompass more than just financial contracts, by extending the language of Peyton-Jones, Eber \& Seward. This language formalises contracts governing the exchange of resources, hence it encompasses the exchange of money, goods and services among multiple parties \cite{andersen2006compositional}. The aforementioned paper laid the groundwork for the contract language of developed by Deon Digital, which has provided us with valuable guidance in how to make our own contract language. Our implementation of the contract language itself will be following the ideas from this paper quite closely.
 
 \section{Why a DSL for Contracts?}
 % Motivation section
@@ -193,6 +196,23 @@ There have been made a general contract language that can encompass more than ju
 % what is it good for in this case?
 
 This part will elaborate on the benefits of making a contract as a DSL. After it will use an example from a paper to show how it is used and implemented.
+
+
+
+\begin{tcolorbox}
+\textbf{Section 1.} The attorney shall provide, on a non-exclusive basis, legal services up to ($n$) hours per month, and furthermore provide services in excess of ($n$) hours upon agreement.\par
+\textbf{Section 2.} In consideration hereof, the company shall pay a monthly fee of (amount in dollars) before the $8^{th}$ day of the following month and ($rate$) per hour for any services in excess of ($n$) hours 40 days after the receival of an invoice.\par
+\textbf{Section 3.} This contract is valid from the $1^{st}$ of January until the $31^{st}$ of December $2020$.
+\end{tcolorbox}
+
+
+\begin{tcolorbox}
+\begin{itemize}
+    \item Alice wishes to buy a bike from Bob.
+    \item Each bike Bob has for sale costs any buyer 100 €
+    \item 
+\end{itemize}
+\end{tcolorbox}
 
 % Nowadays many banks and financial institutions make use of their implementation of a Contract Language as it enables systematic the analysis of their financial contracts. However, while this is the norm in the financial industry, other industries have yet to realise the potential of Contract Languages.
 
