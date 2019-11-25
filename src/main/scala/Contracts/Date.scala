@@ -3,7 +3,7 @@ package Contracts
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
-object Date extends App {
+object Dates extends App {
 
     sealed trait Time {
         def unit :String

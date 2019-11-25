@@ -1,7 +1,7 @@
 package Contracts
 
 
-import Date._
+import Dates._
 
 object Language extends App {
 
@@ -84,7 +84,7 @@ object Language extends App {
     def prettyPrinting (c: Contract): Unit = c match {
         case Atom(f)        => print(f)
         case Or(c1,c2)      => print("OR: " + prettyPrinting(c1) + " is satisfied or " + prettyPrinting(c2) + " is satisfied\n")
-        case Then(a,c)      => print("THEN: First " + prettyPrinting(a) + " must be satistied and then " + prettyPrinting(c) + " must be satified\n")
+        case Seq(a,c)      => print("Seq: First " + prettyPrinting(a) + " must be satistied and then " + prettyPrinting(c) + " must be satified\n")
         case Union(c1,c2)   => print("UNION: awaiting matching events in no particular order for " + prettyPrinting(c1) + " and " + prettyPrinting(c2) + "\n")
         case Succ           => println("SUCCESS")
         case Fail           => println("BREACHED CONTRACT")
