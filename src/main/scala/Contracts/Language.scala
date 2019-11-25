@@ -1,7 +1,7 @@
 package Contracts
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
+
+import Date._
 
 object Language extends App {
 
@@ -12,35 +12,16 @@ object Language extends App {
     case class Item(name: String, value: Int) extends Resource
     case class MonetaryValue(amount: Int) extends Resource
     case class ShoppingCart(items: List[Item]) extends Resource
-    case class Invoice(seller: Agent, buyer: Agent, total: Int, issue: Date, due: Date) extends Resource
-
-    sealed trait time
-    case class Hour(no: Int, unit: String) extends time
-
-    case class Date (date: LocalDateTime){
-        def diff (that :Date, unit: String) = 
-            this.date.until(that.date, ChronoUnit.valueOf(unit)) // unit should be capital
-
-        def -(that: Date) = that.date.until(this.date, ChronoUnit.valueOf("DAYS"))
-        
-        def +(days: Long) = this.date plus(days, ChronoUnit.valueOf("DAYS"))
-    }
-    object Date {
-        def apply(year: Int, month: Int, dayOfMonth: Int, hour: Int, minutes: Int): Date =
-            new Date(LocalDateTime.of(year, month, dayOfMonth, hour, minutes))
-        
-        def apply(): Date = 
-            new Date(LocalDateTime.now())
-    }
+    case class Invoice(seller: Agent, buyer: Agent, total: MonetaryValue, issue: Date, due: Date) extends Resource
     
-    // Event type
+    // Event types
     case class Transaction(a1: Agent, a2: Agent, resource: Resource, timeStamp: Date)
 
     // Contract type
     sealed trait Contract {
         def ||(that: Contract) = Or(this, that)
-        def +(that: Contract) = Union(this, that)
-        def next(that: Contract) = Seq(this, that)
+        def &&(that: Contract) = Union(this, that)
+        def followedBy(that: Contract) = Seq(this, that)
     }
     case class Atom(val f: Transaction => Boolean) extends Contract
     case class Seq(val c1: Contract, val c2: Contract) extends Contract 
@@ -66,7 +47,7 @@ object Language extends App {
             resc1 match {
                 case Fail => Fail
                 case Succ => c2
-                case _ => resc1 next c2
+                case _ => resc1 followedBy c2 //Seq(resc1,c2)
             }
         }
         
@@ -76,9 +57,9 @@ object Language extends App {
             (evalC1, evalC2) match {
                     case (Fail, Fail)   => Fail
                     case (Succ, Succ)   => Succ
-                    case (Fail, _)      => c1 + evalC2
-                    case (_, Fail)      => evalC1 + c2
-                    case (_,_)          => evalC1 + evalC2
+                    case (Fail, _)      => c1 && evalC2
+                    case (_, Fail)      => evalC1 && c2
+                    case (_,_)          => evalC1 && evalC2
             }
         }
 
