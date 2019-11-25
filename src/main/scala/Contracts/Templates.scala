@@ -32,7 +32,7 @@ object Templates extends App {
 	val orderPaid	  = evalC (aPayment) (orderPlaced)
 	val itemDelivered = evalC (aDelivery) (orderPaid) // returns success
 
-	// The below contracts does not work correctly, yet.
+	// The below templates does not work correctly, yet.
 	def extra (att: Agent, com: Agent, invoice: Invoice) = {
         lazy val sendInvoice = Atom(t => t.instigator == att && t.recipient == com && t.resource == invoice)
         lazy val payInvoice = Atom(t => t.instigator == com && t.recipient == att && t.resource == invoice.total && t.timeStamp < invoice.due)
