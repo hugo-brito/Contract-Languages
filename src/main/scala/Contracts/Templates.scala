@@ -12,6 +12,7 @@ object Templates extends App {
 		lazy val payment  = Atom(t => t.instigator == buyer && t.recipient == seller && t.resource == MonetaryValue(amountPaid))
 		lazy val delivery = Atom(t => t.instigator == seller && t.recipient == buyer && t.resource == item)
 		// The way the tranctions are combined in the given contract
+		// Seq(order,Seq(payment,delivery))
 		order followedBy payment followedBy delivery
 	}
 

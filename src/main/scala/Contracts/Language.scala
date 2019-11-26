@@ -32,7 +32,7 @@ object Language extends App {
         def followedBy(that: Contract) = Seq(this, that)
     }
     case class Atom(val f: Transaction => Boolean) extends Contract
-    case class Seq(val c1: Contract, val c2: Contract) extends Contract 
+    case class Seq(val c1: Contract, val c2: Contract) extends Contract
     case class Or(val c1: Contract, val c2: Contract) extends Contract
     case class Union(val c1: Contract, val c2: Contract) extends Contract
     case object Succ extends Contract
