@@ -58,10 +58,14 @@
 % url fonts
 \urlstyle{sf}
 
+
+% Stuff we have added ourselves
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Quotes in report
 \usepackage{csquotes}
+\newcounter{qcounter}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 % % Bibliography package:
 
 % \RequirePackage[
