@@ -58,6 +58,9 @@
 % url fonts
 \urlstyle{sf}
 
+% Quotes in report
+\usepackage{csquotes}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % % Bibliography package:
 
@@ -75,7 +78,7 @@
 % Code formatting   
 \usepackage{listings}
 \lstset{
-   language=java,
+   language=scala,
    extendedchars=true,
    basicstyle=\footnotesize\ttfamily,
    showstringspaces=false,
