@@ -201,9 +201,9 @@ By looking at the contract, it is clear there some things we should model:
 \end{itemize}
 This is modelled in our language the following way:
 \begin{lstlisting}
-	val aBuyer	= Agent("Alice")
-	val aSeller	= Agent("Bob")
-	val anItem	= Item("Bike", 100)
+val aBuyer  = Agent("Alice")
+val aSeller = Agent("Bob")
+val anItem  = Item("Bike", 100)
 \end{lstlisting}
 
 Lines $1$ and $2$ instantiate two \texttt{Agent}s: Alice and Bob. In the universe of our language, these entities constitute parties of a contract: they own \texttt{Resource}s that can be transmitted between those parties.\newline
@@ -212,30 +212,48 @@ Another important detail of this implementation is the use of the \texttt{val} k
 
 Next we wish to express act of Alice ordering the \texttt{Resource} (that we have instantiated as \texttt{Item("Bike", 100)} from Bob). This is expressed within our language the following way:
 \begin{lstlisting}
-    val anOrder	= Order(aBuyer, aSeller, anItem, Date())
+val anOrder = Order(aBuyer, aSeller, anItem, Date())
 \end{lstlisting}
-The \texttt{Order} method from the \texttt{Transaction} companion object creates the \texttt{Transaction} which translates our example. The \texttt{Transaction} type expresses exactly that. It takes two \texttt{Agent}s, the \texttt{Resource} it refers to, a timestamp of type \texttt{Date}. The basic anatomy of a \texttt{Transaction} is:
+The \texttt{Order} method from the \texttt{Transaction} companion object instantiates a \texttt{Transaction} with the given parameters which represent our example. The \texttt{Transaction} type expresses exactly that. It takes two \texttt{Agent}s, the \texttt{Resource} it refers to, a timestamp of type \texttt{Date}. The basic anatomy of a \texttt{Transaction} is:
 \begin{itemize}
     \item The \texttt{instigator} is the \texttt{Agent} that originates the \texttt{Transaction} at hand,
     \item The \texttt{recipient} consists of another \texttt{Agent} and, as the name implies, it receives the \texttt{Resource} the \texttt{Transaction} refers to,
-    \item The \texttt{resource} field holds an object of the \texttt{Resource} type, which we will see later that can represent by different entities. The main idea is that \texttt{resource} is passed from \texttt{instigator} to \texttt{recipient},
-    \item The \texttt{timeStamp} holds a \texttt{Date} which will later help us with certain details of contracts that could for instance involve deadlines.
+    \item The \texttt{resource} field holds an object of the \texttt{Resource} type, which we will see later that can represent by different entities. The goal is to express the idea of \texttt{resource} being passed from \texttt{instigator} to \texttt{recipient},
+    \item The \texttt{timeStamp} holds a \texttt{Date} which will later help us with certain details of contracts that could, for instance, involve deadlines.
 \end{itemize}
 Additionally, it holds some other fields to specify if the transaction refers to an \texttt{Order} or a \texttt{Return}.
 
 After ordering, Alice pays the stipulated price for the bike --- 100 €.
 \begin{lstlisting}
-	val aPayment = Transaction(aBuyer, aSeller, MonetaryValue(anItem.value), Date())
+val aPayment = Transaction(aBuyer, aSeller, MonetaryValue(anItem.value), Date())
 \end{lstlisting}
 This is again a new transaction, but with a fundamental difference: now Alice is actually sending a \texttt{MonetaryValue} of the same \texttt{amount} of \texttt{anItem.value} because this time we are using \texttt{Transaction} instead of \texttt{Order} and also the \texttt{Resource} which this \texttt{Transaction} refers to is a \texttt{MonetaryValue}. Note also that we are actively reading the \texttt{value} of \texttt{anItem} and creating a \texttt{Resource} of the type \texttt{MonetaryValue} (which models real world money).
 
 Finally we wish to express the act of Bob transmitting the bike to Alice, since she has paid for it. Having the previous basic laid, the following piece of code should be easy to understand:
 \begin{lstlisting}
-	val aDelivery = Transaction(aSeller, aBuyer, anItem, Date())
+val aDelivery = Transaction(aSeller, aBuyer, anItem, Date())
 \end{lstlisting}
 Again, a new \texttt{Transaction} from \texttt{aSeller} (which we have previously instantiated as \texttt{Agent("Bob")} to \texttt{aBuyer} (which we have previously instantiated as \texttt{Agent("Alice")}) referring to \texttt{anItem} (which we have previously instantiated as a \texttt{"Bike"} with the unitary value of $100$) on a given date.
 
-So far we have been able to express parties of a contract, resources being those either money or goods, and the transfer of those between two parties. Now we need to combine these in order to model our example contract.
+So far we have been able to express parties of a contract, \texttt{Resource}s being those either money or goods, and the transfer of those between two parties. Now we need to combine these in order to model our example contract. The steps we took so far have assumed that it exists a logic behind the order these \texttt{Transaction}s happen: Alice orders, \textbf{then} she pays, \textbf{then} she gets the bike delivered by Bob. How do we combine this sequence of events so we can assess if a contract has been finished successfully or that it has been breached?
+
+So far we have learned that we need some way to express atomic \texttt{Transaction}s and evaluate if they fulfil what has been agreed and to chain them together in a sequence of events so that we can specify the order in which the events should unfold. We should also be able to express if a contract has been successful or the opposite. With this goal in mind, we have taken the next step in our language and defined the \texttt{Contract} type which is can be instantiated by the types:
+\begin{lstlisting}
+case class Atom(val f: Transaction => Boolean) extends Contract 
+case class Seq(val c1: Contract, val c2: Contract) extends Contract
+case object Succ extends Contract
+case object Fail extends Contract
+\end{lstlisting}
+The \texttt{Atom} type takes a function from \texttt{Transaction} to \texttt{Boolean} --- this is precisely the functionality we were looking for --- to be able to compare a given \texttt{Transaction} to what a predefined \texttt{Contract} expects. The \texttt{Seq} type, as the name implies, takes a sequence of two \texttt{Contract}s and expects the first to return \texttt{Succ}essfully so it can return the remainder of the \texttt{Contract}, which consists of \texttt{c2}. We can now abstract the from our particular example and model a general \texttt{Contract} that expresses the exchange of a good (an \texttt{Item}) for a monetary value (\texttt{MonetaryValue}). We know that:
+\begin{itemize}
+    \item It should consist of 3 steps: an order, a payment and a delivery.
+    \item An order should be followed by a payment and then by a delivery.
+    \item A \texttt{Contract} should only be allowed to evaluate to \texttt{Succ} in the case where all these premises are satisfied but also that the \texttt{buyer} pays the amount the \texttt{item} is worth and that a delivery of that very same \texttt{item} is done from the \texttt{seller} to the \texttt{buyer}.
+    \item As soon as one of the \texttt{Transaction}s the \texttt{Contract} is expecting fails to be satisfied, independently of its nature (the \texttt{amountPaid} does not match the \texttt{value} of \texttt{Item} in question; the \texttt{seller} sends the wrong \texttt{Item}; etc.), it should evaluate to \texttt{Fail}.
+\end{itemize}
+\begin{lstlisting}
+Seq(
+\end{lstlisting}
 
 --------------------------- MODEL CONTRACT --------------------------------
 
@@ -246,14 +264,40 @@ So far we have been able to express parties of a contract, resources being those
 \end{tcolorbox}
 
 \section{Contract Formalisation Requirements}
-When referring to contracts we follow the definition of Hvidtved:
+When referring to contracts we follow the definition of Hvitved:
 \begin{displayquote}
 \textit{"A contract is a legally binding agreement between two or more
 parties. The agreement is a normative description of commitments between the parties of the contract, that is a contract describes the expected actions to be performed by the participants of the contract."}
 \cite{hvitved2011contract}
 \end{displayquote}
 
-When formalising contracts it is vital to consider both formal models and formal languages. A formal model refers to a semantic mathematical model of a contract while a formal language refer to a syntactic representation of a contract \cite{hvitved2011contract}. When creating a contract language both of these needs to be considered, however, since we are modelling our language after J. Andersen et al., we focus solely on implementing a formal language in Scala.
+Hence, we restrict contracts to the definition of ought-to-do instead of ought-to-be. Following this we use Hvitved's definition of the requirements that needs to be upheld to formalise a contract "ideally".
+
+\begin{list}{R\arabic{qcounter}:~}{\usecounter{qcounter}}
+    \item Contract model, contract language, and a formal semantics.
+    \item Contract participants.
+    \item (Conditional) commitments.
+    \item Absolute temporal constraints.
+    \item Relative temporal constraints.
+    \item Reparation clauses.
+    \item Instantaneous and continuous actions.
+    \item Potentially infinite and repetitive contracts.
+    \item Time-varying, external dependencies (observables).
+    \item History-sensitive commitments.
+    \item In-place expressions.
+    \item Parametrised contracts.
+    \item Isomorphic encoding.
+    \item Run-time monitoring.
+    \item Blame assignment.
+    \item Amenability to (compositional) analysis.
+\end{list}
+
+When formalising contracts it is vital to consider a formal contract model and a formal contract language separately. A formal model refers to a semantic mathematical model of a contract while a formal language refer to a syntactic representation of a contract. When creating a contract language both of these should ideally be combined in terms of the language's semantics \cite{hvitved2011contract}, which corresponds to R1. However, since we are modelling our language after J. Andersen et al., we focus solely on implementing the semantics in Scala, hence we do not consider R1 in our implementation. When we refer to our Contract Language we only consider the semantics.
+
+\section{Contract Formalisms}
+While there exists several different approaches to contract formalisation, the 3 main one's are (deontic) logic based formalisms, event-condition-action based formalisms and trace based formalisms. 
+
+In this report we follow a variation of trace-based formalism specifically Process Algebra since it is derived from J. Andersen et al., which our language is based upon.
 
 % Nowadays many banks and financial institutions make use of their implementation of a Contract Language as it enables systematic the analysis of their financial contracts. However, while this is the norm in the financial industry, other industries have yet to realise the potential of Contract Languages.
 
