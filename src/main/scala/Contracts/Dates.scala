@@ -48,6 +48,8 @@ object Dates extends App {
         
         def <(that :Date) :Boolean = this.date isBefore that.date
 
+        def <=(that :Date) :Boolean = this < that || this == that
+
         def ==(that :Date) = this.date equals that.date
 
         def -(that: Date) = that.date.until(this.date, ChronoUnit.valueOf("DAYS"))

@@ -16,7 +16,7 @@ import Contracts.Dates._
 
 val buyer = Agent("Jonas")
 val seller = Agent("Hugo")
-val item = Item("bike", 3499)
+val item = Item("bike")
 val amountPaid = 3499
 val t1 = Transaction(buyer,seller, item, Date())
 val t2 = Transaction(buyer,seller, MonetaryValue(amountPaid), Date())
