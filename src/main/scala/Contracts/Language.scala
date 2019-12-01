@@ -17,29 +17,26 @@ object Language extends App {
     // Event type
     case class Transaction(instigator: Agent, recipient: Agent, resource: Resource, timeStamp: Date)
 
-    /*
-    , isAnOrder: Boolean = false, isAReturn: Boolean = false)
-    object Transaction {
-        def Order(instigator: Agent, recipient: Agent, resource: Resource, timeStamp: Date): Transaction =
-            new Transaction(instigator, recipient, resource: Resource, timeStamp: Date, true, false)
-            // could be nice to enforce that orders could only be on items or shopping cart
-        def Return(instigator: Agent, recipient: Agent, resource: Resource, timeStamp: Date): Transaction =
-            new Transaction(instigator, recipient, resource: Resource, timeStamp: Date, false, true)
-            // This way, both the buyer and the seller can return the items and the amount that refers to the purchase
-    }
-    */
-
-
     // Contract type
     sealed trait Contract {
         def or(that: Contract) = Or(this, that)
-        def then(that: Contract) = Seq(this, that)
+        def then(that: Contract) = seq(this, that)
     }
     case class Commitment(val f: Transaction => Option[Contract]) extends Contract
-    case class Seq(val c1: Contract, val c2: Contract) extends Contract // Do we really need it?
     case class Or(val c1: Contract, val c2: Contract) extends Contract
     case object Succ extends Contract
     case object Fail extends Contract
+
+    def seq (c: Contract, c3: Contract) :Contract= 
+        c match {
+            case Commitment(f) => Commitment(t => f(t) match {
+                case None => None
+                case Some(c1) => Some(seq(c1,c3))
+            })
+            case Or(c1,c2) => Or(seq(c1,c3),seq(c2,c3))
+            case Succ => c3
+            case Fail => Fail
+        }
 
     // Return Option[Contract]
     // Evaluator function
