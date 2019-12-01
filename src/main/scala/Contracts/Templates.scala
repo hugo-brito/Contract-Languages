@@ -28,14 +28,14 @@ object Templates extends App {
 											Some(Commitment(t4 => // 2nd payment
 												if (t4.ins == buyer && t4.rec == seller && t4.res == MonetaryValue(pay/2) && t4.time <= t3.time + Days(30))
 												Some(salesContract(buyer, seller, goods, pay) // Can order again
-													or // if 2nd payment late
-													Commitment(t5 => if (t5.ins == buyer && t5.rec == seller && t5.res == MonetaryValue(1.1*(pay/2)) && t5.time <= t3.time +Days(44))
-													Some(salesContract(buyer, seller, goods, pay)) // can order again
-													else None
-													)
 												)
-												else None										
-											))
+												else None)
+												or // if 2nd payment late
+												Commitment(t5 => if (t5.ins == buyer && t5.rec == seller && t5.res == MonetaryValue(1.1*(pay/2)) && t5.time <= t3.time +Days(44))
+												Some(salesContract(buyer, seller, goods, pay)) // can order again
+												else None
+												)							
+											)
 										else None
 									))
 								else None
