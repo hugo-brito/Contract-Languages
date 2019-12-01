@@ -29,6 +29,7 @@ object Language extends App {
                 case Fail => Fail
             }
     }
+
     case class Commitment(val f: Transaction => Option[Contract]) extends Contract
     case class Or(val c1: Contract, val c2: Contract) extends Contract
     case object Succ extends Contract
