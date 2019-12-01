@@ -36,14 +36,16 @@ object Language extends App {
         def then(that: Contract) = Seq(this, that)
     }
     case class Commitment(val f: Transaction => Option[Contract]) extends Contract
-    case class Seq(val c1: Contract, val c2: Contract) extends Contract
+    case class Seq(val c1: Contract, val c2: Contract) extends Contract // Do we really need it?
     case class Or(val c1: Contract, val c2: Contract) extends Contract
     case object Succ extends Contract
     case object Fail extends Contract
 
+    // Return Option[Contract]
     // Evaluator function
     def evalC (e: Transaction) (c: Contract) :Contract = { 
 
+        // orElse
         def reduceOr (c1: Contract, c2: Contract): Contract = {
             val evalC1 = evalC (e) (c1)
             lazy val evalC2 = evalC (e) (c2)
@@ -53,16 +55,31 @@ object Language extends App {
             }
         }
 
-        def reduceSeq (c1: Contract, c2: Contract): Contract = {
-            val resc1 = evalC (e) (c1)
-            (c1, resc1) match {
-                case (Fail, _) => Fail
-                case (Succ, _) => c2
-                case (_, Fail) => Fail
-                case (_, Succ) => c2
-                case _ => resc1 then c2 //Seq(resc1,c2)
+        def isNullable (c: Contract): Boolean = 
+            c match {
+                case Succ       => true
+                case Seq(c1,c2) => isNullable(c1) && isNullable(c2)
+                case Or(c1,c2)  => isNullable(c1) || isNullable(c2)
+                case _ => false
             }
+
+        def reduceSeq (c1: Contract, c2: Contract): Contract = {
+            lazy val c1p = evalC(e) (c1)
+            lazy val c2p = evalC(e) (c2)
+            lazy val c1_nuab = isNullable(c1)
+            lazy val c1p_nuab = isNullable(c1p)
+            lazy val c2p_nuab = isNullable(c2p)
+
+            if (c1_nuab && !c1p_nuab){
+                c2p
+            } else if(!isNullable(c1)){
+                c2p then c2
+            } 
         }
+
+        // If c1 is nullable and whether the event matches
+        // f: (c1, c2) => c3
+        // consider (Succ then Succ) then c1
 
         def reduceCommitment (f: Transaction => Option[Contract], e: Transaction) = {
             val o = f(e)
