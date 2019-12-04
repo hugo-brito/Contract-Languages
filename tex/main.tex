@@ -116,15 +116,14 @@
 % \end{itemize}
 %
 % A well written F\# (Scala) example should be fine, not necessary to formally define in logic.
-In this report we will investigate how to develop our own contract language in the domain of a simple exchange of resources. We will start by giving a brief introduction to the core concepts of this paper and the problem we are trying to solve. The concept of a contract language will be more thoroughly explored in the methodology section.
+This paper reports on the implementation of a prototype contract-specification language. This prototype was built with the goal of modelling the domain of exchange of resources. We start by giving a brief introduction to the core concepts of this paper and the problem we aim to solve.
 
 % \item Explain what a contract language is
 \section{What is a Domain-Specific Language?}
 % Does it answer the question: What are Contract Languages used for?
 
 % very good explanation on what a https://www.jetbrains.com/mps/concepts/domain-specific-languages/
-A domain-specific language (from now on DSL) is a programming language tailored to a specific problem domain. Contrary to what happens with a general-purpose programming language, which use is not restricted to a particular type of problem or machine, a DSL is built with the sole purpose of modelling and expressing a specific set of problems \cite{van2000domain}.
-
+A domain-specific language (DSL) is a programming language tailored to a specific problem domain \cite{whatsisadsl2005}. Whereas with a general-purpose programming language, which use is not restricted to a particular type of problem or machine, a DSL is built with the sole purpose of modelling and expressing a specific set of problems \cite{van2000domain}. %comment from willard: Consider a different citation style ("plain", or, if you need a little more, "alpha")., not sure what he means.
 Typically, it is less complex to use than a general-purpose programming language and it is meant to be developed in close contact with domain experts, as ultimately these will constitute its users \cite{dsl}.
 
 \section{What is a Contract?}
@@ -136,14 +135,29 @@ When referring to contracts we follow the definition of Hvitved:
 \end{displayquote}
 
 \section{What is a Contract Language?}
-A contract language is a DSL tailored for contracts. Unlike most other DSLs the purpose of a contract language is to express contracts that can be treated like data, hence it can be executed several times. By having this construct, one can effectively manage all aspects of the contract. One example is when modelling a contract, one can assume that it is composed of a limited set of commitment between parties. If it is known that one party has fulfilled one the commitment, very easily one can evaluate the remainder of the contract, e.g. the set of remaining commitments that are yet to be fulfilled. Moreover, these contracts are subjected to monitoring and various user-defined analyses \cite{andersen2006compositional}.
+A contract-specification language is a DSL tailored for contracts. Its purpose is to express contracts that can be treated like data, hence it can be executed several times. By having this construct, one can effectively manage all aspects of the given contract. One example is when modelling a contract, one can assume that it is composed of a limited set of commitment between parties. If it is known that one party has fulfilled one of the commitments, very easily the remainder can be evaluated, e.g. the set of remaining commitments that are yet to be fulfilled is returned. Moreover, these contracts are subjected to monitoring and various user-defined analyses \cite{andersen2006compositional}.
 
-Unfortunately, not all contracts can be implemented using a contract language as it requires the given contract to be unambiguous in nature, such as financial contracts and in general contracts governing the exchange of resources. On top pf this, some aspects of a contract that are simply too complex to model. % comment from patrick: Is that the only reason?
+Not all contracts can be implemented using a contract language as it requires the given contract to be unambiguous in nature, such as financial contracts and in general contracts governing the exchange of resources. On top pf this, some aspects of a contract that are simply too complex to model. % comment from patrick: Is that the only reason?
 
 % but it is stricter in the sense that it is part of smaller subset of the DSLs that are built and used only in the context of Contracts. Specifically contracts that tend to be unambiguous in nature, hence Financial Contract, Exchange of Resources etc.
 % This kind of contracts allows for an extreme simplification of the DSL since it does not deal with, e.g. perishable goods, etc. By the fact they deal mainly with amounts of money, which does not require, e.g. somewhere to be stored, does not perish, can be easily transferred (does not require transportation), they are simpler to model, reason and work with.
 
-\section{Problem formulation}
+\section{What is Testing?} % Willard: an example would be nice
+Testing is an important step when making any piece of software available to the general public. It helps save money, improve product quality and customer satisfaction \cite{4reasonstesting}.
+Classical approaches to testing include white- and black-box testing \cite{testing}.
+
+In order to understand the advantages and major differences between the most common ways of testing software and property-based testing, it is important to mention the principles in which the previous operate.
+\begin{itemize}
+    \item Black-box testing takes a piece of software as a black box: concept involves inputting some data and knowing beforehand what the output should be. It does not need to know the source code as it does not care how the software achieves the result. It focuses on functionality \cite{testing}.
+    \item White-box testing requires access to the source code and tests the internal structures of a software. It checks for branch, statement and decision coverage, among others. The goal is to understand which line of the code is being executed and identify how the execution of the software can branch and what the correct output should be \cite{williams2006white}.
+\end{itemize}
+
+\subsection{Property-based Testing} % Willard: an example would be nice, e.g. quickcheck
+Property-Based Testing (PBT) takes testing to another level by assessing if a program violates a formally-specified property by generating random input to the program. It checks that the function, program or in our case a contract abides by the given property. Properties are "rules" that the output of given program, function or contract should always follow \cite{fink1994towards}.
+
+In this project we are not going to explore PBT on contracts in detail, as this is the focus of our thesis. We will, however, try to formulate some properties of the contracts that could then be tested on later.
+
+\section{Problem formulation} % This does not quite reflect what is written in Project Base. I know that the reason you are doing this project is to learn stuff. However, the reader does not care why you did this; they only care about what you did. Focus on the product; that's what the report should document.
 The point of this report is for us to gain an understanding of how to implement and use a DSL to describe contracts. With that in mind we aim to do the following:
 
 \begin{itemize}
@@ -153,7 +167,6 @@ The point of this report is for us to gain an understanding of how to implement 
 \end{itemize}
 
 All of the aforementioned have the underlying goal of understanding the benefit of contract languages.
-
 
 \chapter{Methodology}
 % Does it answer the question: Explain what's out there, in terms of Research
@@ -165,9 +178,9 @@ All of the aforementioned have the underlying goal of understanding the benefit 
 In this paper we use the inductive approach to determine how to develop our contract language. This section will lay out the current research in the area and how we define a contract language.
 
 \section{Background}
-DSLs have been around almost as long as the the existence of humans, as we always find a way to simplify language within certain domains. Musicians use musical notation, lawyers use legal-language and we programmers use code. Nowadays most programmers use general-purpose languages that might contain DSLs to make the solving of certain problems easier, whereas older languages such as Cobol were made as dedicated languages to solve a certain range of problems \cite{van2000domain}. A good analogy is for a DSL is to think of a crafting a specialised tool for a specific task, instead of using non-specific tool for such task.
+DSLs have been around almost as long as the the existence of humans, as we always find a way to simplify language within certain domains. Musicians use musical notation, lawyers use legal-language and we programmers use code. Nowadays most programmers use general-purpose languages that might contain DSLs to make the solving of certain problems easier, whereas older languages such as SQL\footnote{«\textit{SQL, which stands for Structured Query Language, is a programming language that is used to communicate with and manipulate databases.}» \cite{whatisSQL}} were made as dedicated languages to solve a certain range of problems \cite{van2000domain}. A good analogy is for a DSL is to think of a crafting a specialised tool for a specific task, instead of using non-specific tool for such task.
 
-However, the idea of using a DSL to give a formal description to financial contracts in code, where not introduced until the 2000's by Peyton-Jones, Eber \& Seward. They specifically explored how to express financial contracts, such as bonds, stocks, etc. and even made a combinator library \cite{peyton2000composing}. This type of DSL is known as a contract language. To this day, contract languages are still most commonly used in the domain of the financial industry. One of the first companies to utilise this was LexiFi\footnote{\url{https://www.lexifi.com/}} which has since been followed by most banks and other companies such as SimCorp\footnote{\url{https://www.simcorp.com/}}.
+However, the idea of using a DSL to give a formal description to financial contracts in code, was not introduced until the 2000's by Peyton-Jones, Eber \& Seward. They specifically explored how to express financial contracts, such as bonds, stocks, etc. and even made a combinator library \cite{peyton2000composing}. This type of DSL is known as a contract language. To this day, contract languages are still most commonly used in the domain of the financial industry. One of the first companies to utilise this was LexiFi\footnote{\url{https://www.lexifi.com/}} which has since been followed by most banks and other companies such as SimCorp\footnote{\url{https://www.simcorp.com/}}.
 
 Andersen et al.\ have taken an extra step by building a general contract language that can encompass more than just financial contracts, and they have done so by extending Peyton-Jones, Eber \& Seward's language. This language formalises contracts governing the exchange of resources, hence it encompasses the exchange of money, goods and services among multiple parties \cite{andersen2006compositional}. The aforementioned paper laid the groundwork for the contract language developed by Deon Digital\footnote{\url{https://www.deondigital.com/}}, which has provided us with valuable guidance on how to approach, design and build our own contract language.
 
