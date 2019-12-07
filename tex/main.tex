@@ -116,31 +116,36 @@
 % \end{itemize}
 %
 % A well written F\# (Scala) example should be fine, not necessary to formally define in logic.
-This paper reports on the implementation of a prototype contract-specification language. This prototype was built with the goal of modelling the domain of exchange of resources. We start by giving a brief introduction to the core concepts of this paper and the problem we aim to solve.
 
-% \item Explain what a contract language is
-\section{What is a Domain-Specific Language?}
-% Does it answer the question: What are Contract Languages used for?
+Picture the scenario of a banking institution with thousands of requests for their financial products, being those in the form of home loans, credit cards, personal loans, etc. How could one assess those requests on a timely manner? How could one even manage all the active contracts? How would it be in the case of a breached contract? Certainly not with pen and paper.
 
-% very good explanation on what a https://www.jetbrains.com/mps/concepts/domain-specific-languages/
-A domain-specific language (DSL) is a programming language tailored to a specific problem domain \cite{whatsisadsl2005}. Whereas with a general-purpose programming language, which use is not restricted to a particular type of problem or machine, a DSL is built with the sole purpose of modelling and expressing a specific set of problems \cite{van2000domain}. %comment from willard: Consider a different citation style ("plain", or, if you need a little more, "alpha")., not sure what he means.
-Typically, it is less complex to use than a general-purpose programming language and it is meant to be developed in close contact with domain experts, as ultimately these will constitute its users \cite{dsl}.
+In this digital era, contracts have certainly moved digital too. In this paper we will implement and discuss a framework for expressing contracts digitally by the means of contract-specification language. The goal is to design a prototype language that allows to express contracts between parties --- commitments between them that will later be checked against actual taken actions. Having the first in place, and then informing the program of the latter will result on the evaluation of the remainder of the given contract. This means to know what commitments are yet to be fulfilled or, if the current contract has been breached, or if it has finished successfully (all parties have delivered what they promised).
+
+This framework will allow their users to:
+\begin{itemize}
+    \item Build templates for contracts of many kinds --- a simple purchase, a loan, exchange of currency. \item Manage active contracts.
+    \item Reason about both contract templates and potential contracts, and even to build strong contract templates that disallow negative effects on both parties, among others.
+\end{itemize}
 
 \section{What is a Contract?}
 
-When referring to contracts we follow the definition of Hvitved:
+The concept of contract will often arise throughout this paper. In this context, we resort to the definition of contract by Hvitved:
 \begin{displayquote}
 \textit{"A contract is a legally binding agreement between two or more parties. The agreement is a normative description of commitments between the parties of the contract, that is a contract describes the expected actions to be performed by the participants of the contract."}
 \cite{hvitved2011contract}
 \end{displayquote}
 
+% \item Explain what a contract language is
+\section{What is a Domain-Specific Language?}
+% Does it answer the question: What are Contract Languages used for?
+
+As previously mentioned, a we wish to easily express and reason about contracts. To achieve this, we built a prototype which consists of a domain-specific language. A domain-specific language (DSL) is a programming language tailored to a specific problem domain \cite{whatsisadsl2005}. Whereas with a general-purpose programming language, which use is not restricted to a particular type of problem or machine, a DSL is built with the sole purpose of modelling and expressing a specific set of problems \cite{van2000domain}. %comment from willard: Consider a different citation style ("plain", or, if you need a little more, "alpha")., not sure what he means.
+Typically, it is less complex to use than a general-purpose programming language and it is meant to be developed in close contact with domain experts, as ultimately these will constitute its users \cite{dsl}.
+
 \section{What is a Contract Language?}
 A contract-specification language is a DSL tailored for contracts. Its purpose is to express contracts that can be treated like data, hence it can be executed several times. By having this construct, one can effectively manage all aspects of the given contract. One example is when modelling a contract, one can assume that it is composed of a limited set of commitment between parties. If it is known that one party has fulfilled one of the commitments, very easily the remainder can be evaluated, e.g. the set of remaining commitments that are yet to be fulfilled is returned. Moreover, these contracts are subjected to monitoring and various user-defined analyses \cite{andersen2006compositional}.
 
-Not all contracts can be implemented using a contract language as it requires the given contract to be unambiguous in nature, such as financial contracts and in general contracts governing the exchange of resources. On top pf this, some aspects of a contract that are simply too complex to model. % comment from patrick: Is that the only reason?
-
-% but it is stricter in the sense that it is part of smaller subset of the DSLs that are built and used only in the context of Contracts. Specifically contracts that tend to be unambiguous in nature, hence Financial Contract, Exchange of Resources etc.
-% This kind of contracts allows for an extreme simplification of the DSL since it does not deal with, e.g. perishable goods, etc. By the fact they deal mainly with amounts of money, which does not require, e.g. somewhere to be stored, does not perish, can be easily transferred (does not require transportation), they are simpler to model, reason and work with.
+Approaches to modelling contracts could diverge immensely, but we focus on contracts that are unambiguous in their nature, such as financial contracts and in general contracts governing the exchange of resources.
 
 \section{What is Testing?} % Willard: an example would be nice
 Testing is an important step when making any piece of software available to the general public. It helps save money, improve product quality and customer satisfaction \cite{4reasonstesting}.
@@ -158,15 +163,13 @@ Property-Based Testing (PBT) takes testing to another level by assessing if a pr
 In this project we are not going to explore PBT on contracts in detail, as this is the focus of our thesis. We will, however, try to formulate some properties of the contracts that could then be tested on later.
 
 \section{Problem formulation} % This does not quite reflect what is written in Project Base. I know that the reason you are doing this project is to learn stuff. However, the reader does not care why you did this; they only care about what you did. Focus on the product; that's what the report should document.
-The point of this report is for us to gain an understanding of how to implement and use a DSL to describe contracts. With that in mind we aim to do the following:
-
+With the ultimate goal of coming up with a prototype of language to build and evaluate contracts, this paper reports on:
 \begin{itemize}
-    \item Gain insight to the literature in this area along with what kind of contracts one can implement.
-    \item Create a working prototype of our contract language.
-    \item Be able to do simple analysis on the language.
+    \item The state-of-the-art of domain-specific languages built for the purpose of expressing and operating contracts digitally.
+    \item The aspects considered when building the present prototype language.
+    \item The implementation of the language.
+    \item A discussion regarding the strengths and pitfalls of this particular implementation.
 \end{itemize}
-
-All of the aforementioned have the underlying goal of understanding the benefit of contract languages.
 
 \chapter{Methodology}
 % Does it answer the question: Explain what's out there, in terms of Research
