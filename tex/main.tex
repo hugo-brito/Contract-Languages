@@ -50,73 +50,6 @@
 
 \chapter{Introduction}
 
-%% Possible commands and headers:
-% (Copied from the original template)
-
-% \originally{History of the Makhnovist Movement; 1923}
-% \joint{Peter Arshinov}
-% \chapter{Something in Between}
-% Somewhere at sometime...
-
-% \section{A Section}
-% \subsection{A Subsection}
-% Some text.
-% \subsubsection{A subsubsection}
-% More text here.
-
-% Here's some verbatim text:
-% \begin{verbatim}
-% data Vect : Nat -> Type -> Type where
-%   Nil : Vect 0 a
-%   (::) : a -> Vect n a -> Vect (1 + n) a
-% \end{verbatim}
-
-% \joint{Emma Goldman}
-% \chapter{At the Same Time Somewhere Else}
-% ... happened something else
-
-% Here's some mathematics:
-% \begin{displaymath}
-%   \frac{
-%     \Gamma, x:\tau_1\;\vdash\; e \;:\; \tau_2
-%   }{
-%     \Gamma\;\vdash\;\lambda x : \tau_1 . e \;:\; \tau_1\to\tau_2}
-% \end{displaymath}
-
-% \originally{My autobiography; 1934}
-% \chapter{Conclusion}
-% Finished
-
-% Report guidelines:
-% \begin{itemize}
-%     \item 15 pg. + 2 pg per group member (19 pg max)
-%     \item Go for around 17 pages. Should be self-contained, someone who was not in these meetings should be able to understand the report. 
-%     \item Report should be lean and concrete, it is okay if it takes up less pages.
-%     \item If unsure about omitting or including stuff in report, can consult them.
-% \end{itemize}
-% We should start working on sections, so we can get feedback from them as much as possible.
-
-% -------------------------
-
-% \begin{itemize}
-%     \item Explain what a contract language is
-%     \item Explain what's out there, in terms of Research
-%     \item What are Contract Languages used for?
-%     \begin{itemize}
-%         \item Use an example as motivation to tell a story
-%         \item Use an example to show how is used and how implemented (doesn't have to be own)
-%         \item tell a story, we want to describe something and why ours looks different (because it explains what it is supposed to express)
-%     \end{itemize}
-% 	\item Show our contract (show the actual contract and explain with code examples how it works)
-% 	\begin{itemize}
-% 	    \item What is our intention of doing it like so?
-% 	    \item Define our language (Evaluation function should do this)
-% 	\end{itemize}
-% 	\item Pick some properties that could be interesting to consider for our language, but do not implement property based testing.
-% \end{itemize}
-%
-% A well written F\# (Scala) example should be fine, not necessary to formally define in logic.
-
 Picture the scenario of a banking institution with thousands of requests for their financial products, being those in the form of home loans, credit cards, personal loans, etc. How could one assess those requests on a timely manner? How could one even manage all the active contracts? How would it be in the case of a breached contract? Certainly not with pen and paper.
 
 In this digital era, contracts have certainly moved digital too. In this paper we will implement and discuss a framework for expressing contracts digitally by the means of contract-specification language. The goal is to design a prototype language that allows to express contracts between parties --- commitments between them that will later be checked against actual taken actions. Having the first in place, and then informing the program of the latter will result on the evaluation of the remainder of the given contract. This means to know what commitments are yet to be fulfilled or, if the current contract has been breached, or if it has finished successfully (all parties have delivered what they promised).
@@ -128,14 +61,13 @@ This framework will allow their users to:
 \end{itemize}
 
 \section{What is a Contract?}
-
+\label{contract}
 The concept of contract will often arise throughout this paper. In this context, we resort to the definition of contract by Hvitved:
 \begin{displayquote}
 \textit{"A contract is a legally binding agreement between two or more parties. The agreement is a normative description of commitments between the parties of the contract, that is a contract describes the expected actions to be performed by the participants of the contract."}
 \cite{hvitved2011contract}
 \end{displayquote}
 
-% \item Explain what a contract language is
 \section{What is a Domain-Specific Language?}
 % Does it answer the question: What are Contract Languages used for?
 
@@ -143,29 +75,14 @@ As previously mentioned, a we wish to easily express and reason about contracts.
 Typically, it is less complex to use than a general-purpose programming language and it is meant to be developed in close contact with domain experts, as ultimately these will constitute its users \cite{dsl}.
 
 \section{What is a Contract Language?}
-A contract-specification language is a DSL tailored for contracts. Its purpose is to express contracts that can be treated like data, hence it can be executed several times. By having this construct, one can effectively manage all aspects of the given contract. One example is when modelling a contract, one can assume that it is composed of a limited set of commitment between parties. If it is known that one party has fulfilled one of the commitments, very easily the remainder can be evaluated, e.g. the set of remaining commitments that are yet to be fulfilled is returned. Moreover, these contracts are subjected to monitoring and various user-defined analyses \cite{andersen2006compositional}.
+A Contract Language (CL) is a DSL tailored for contracts. Its purpose is to express contracts that can be treated like data, hence it can be executed several times. By having this construct, one can effectively manage all aspects of the given contract. One example is when modelling a contract, one can assume that it is composed of a limited set of commitment between parties. If it is known that one party has fulfilled one of the commitments, very easily the remainder can be evaluated, e.g. the set of remaining commitments that are yet to be fulfilled is returned. Moreover, these contracts are subjected to monitoring and various user-defined analyses \cite{andersen2006compositional}.
 
 Approaches to modelling contracts could diverge immensely, but we focus on contracts that are unambiguous in their nature, such as financial contracts and in general contracts governing the exchange of resources.
-
-\section{What is Testing?} % Willard: an example would be nice
-Testing is an important step when making any piece of software available to the general public. It helps save money, improve product quality and customer satisfaction \cite{4reasonstesting}.
-Classical approaches to testing include white- and black-box testing \cite{testing}.
-
-In order to understand the advantages and major differences between the most common ways of testing software and property-based testing, it is important to mention the principles in which the previous operate.
-\begin{itemize}
-    \item Black-box testing takes a piece of software as a black box: concept involves inputting some data and knowing beforehand what the output should be. It does not need to know the source code as it does not care how the software achieves the result. It focuses on functionality \cite{testing}.
-    \item White-box testing requires access to the source code and tests the internal structures of a software. It checks for branch, statement and decision coverage, among others. The goal is to understand which line of the code is being executed and identify how the execution of the software can branch and what the correct output should be \cite{williams2006white}.
-\end{itemize}
-
-\subsection{Property-based Testing} % Willard: an example would be nice, e.g. quickcheck
-Property-Based Testing (PBT) takes testing to another level by assessing if a program violates a formally-specified property by generating random input to the program. It checks that the function, program or in our case a contract abides by the given property. Properties are "rules" that the output of given program, function or contract should always follow \cite{fink1994towards}.
-
-In this project we are not going to explore PBT on contracts in detail, as this is the focus of our thesis. We will, however, try to formulate some properties of the contracts that could then be tested on later.
 
 \section{Problem formulation} % This does not quite reflect what is written in Project Base. I know that the reason you are doing this project is to learn stuff. However, the reader does not care why you did this; they only care about what you did. Focus on the product; that's what the report should document.
 With the ultimate goal of coming up with a prototype of language to build and evaluate contracts, this paper reports on:
 \begin{itemize}
-    \item The state-of-the-art of domain-specific languages built for the purpose of expressing and operating contracts digitally.
+    \item A domain-specific languages built for the purpose of expressing and operating contracts digitally.
     \item The aspects considered when building the present prototype language.
     \item The implementation of the language.
     \item A discussion regarding the strengths and pitfalls of this particular implementation.
@@ -181,15 +98,15 @@ With the ultimate goal of coming up with a prototype of language to build and ev
 In this paper we use the inductive approach to determine how to develop our contract language. This section will lay out the current research in the area and how we define a contract language.
 
 \section{Background}
-DSLs have been around almost as long as the the existence of humans, as we always find a way to simplify language within certain domains. Musicians use musical notation, lawyers use legal-language and we programmers use code. Nowadays most programmers use general-purpose languages that might contain DSLs to make the solving of certain problems easier, whereas older languages such as SQL\footnote{«\textit{SQL, which stands for Structured Query Language, is a programming language that is used to communicate with and manipulate databases.}» \cite{whatisSQL}} were made as dedicated languages to solve a certain range of problems \cite{van2000domain}. A good analogy is for a DSL is to think of a crafting a specialised tool for a specific task, instead of using non-specific tool for such task.
+DSLs have been around almost as long as the the existence of humans, as we always find a way to simplify language within certain domains. Musicians use musical notation, lawyers use legal-language and we programmers use code. Nowadays most programmers use general-purpose languages that might contain DSLs to make the solving of certain problems easier, whereas older languages such as SQL\footnote{«\textit{SQL, which stands for Structured Query Language, is a programming language that is used to communicate with and manipulate databases.}» \cite{whatisSQL}} were made as dedicated languages to solve a certain range of problems \cite{van2000domain}.
 
-However, the idea of using a DSL to give a formal description to financial contracts in code, was not introduced until the 2000's by Peyton-Jones, Eber \& Seward. They specifically explored how to express financial contracts, such as bonds, stocks, etc. and even made a combinator library \cite{peyton2000composing}. This type of DSL is known as a contract language. To this day, contract languages are still most commonly used in the domain of the financial industry. One of the first companies to utilise this was LexiFi\footnote{\url{https://www.lexifi.com/}} which has since been followed by most banks and other companies such as SimCorp\footnote{\url{https://www.simcorp.com/}}.
+However, the idea of using a DSL to give a formal description to contracts in code, was not introduced until the 2000's by Peyton-Jones, Eber \& Seward. They specifically explored how to express financial contracts, such as bonds, stocks, etc. and even made a combinator library \cite{peyton2000composing}. This type of DSL is known as a contract language. To this day, contract languages are still most commonly used in the domain of the financial industry.
 
 Andersen et al.\ have taken an extra step by building a general contract language that can encompass more than just financial contracts, and they have done so by extending Peyton-Jones, Eber \& Seward's language. This language formalises contracts governing the exchange of resources, hence it encompasses the exchange of money, goods and services among multiple parties \cite{andersen2006compositional}. The aforementioned paper laid the groundwork for the contract language developed by Deon Digital\footnote{\url{https://www.deondigital.com/}}, which has provided us with valuable guidance on how to approach, design and build our own contract language.
 
-Hvitved published in 2011 «A Survey of Formal Languages and Models for Contracts» where he has compared many of the existing DSLs and formal ways to model contracts\footnote{See \cite{hvitved2011contract} chapter 1, pp. 25}. He has noticed that none of the models he studied had a focus on blame assignment within this domain. We believe that this fact has been his motivation to produce the paper «A trace-based model for multiparty contracts». This focus has been one of the most recent advances in the field. Blame assignment introduces another step in the direction of a more complete DSL for contracts since the underlying goal of a DSL for contracts is to provide all the parts of such contract not only if, when and why the contract has been breached, but by whom as well. Blame assignment can therefore be an important aspect to consider when modelling such class of DSLs as it potentially saves a lot of time when understanding the origin of the breach. It could potentially help figuring out who should be accounted for repairs, and it would also report contract breaches as the contract is being executed. These can come, for example, in the form of a deadline that has not been respected, the act of executing some action explicitly forbidden by the contract, etc. Being able to model contracts that account for these aspects has been proven as a very effective way to describe real-world contracts. A noticeable advantage of this is being able to simulate possible outcomes of future events and to issue reminders for deadlines that are closing in --- which could potentially make the difference between breaching a contract or not, and by consequence being able to avoid paying for repairs/compensation \cite{hvitved2012trace}.
+In the paper «A trace-based model for multiparty contracts» blame assignment was introduced. Before, it was possible to discern if, when and why a contract had been breached, but not by whom. Blame assignment considers who the perpetrator is adding substantial value to the field as knowing the origin of the breach can potentially save a lot of time by avoiding court. It also reports contract breaches as the contract is being executed. These can come, for example, in the form of a deadline that has not been respected, the act of executing some action explicitly forbidden by the contract, etc. Being able to model contracts that account for these aspects has been proven as a very effective way to describe real-world contracts. A noticeable advantage of this is being able to simulate possible outcomes of future events and to issue reminders for deadlines that are closing in --- which could potentially make the difference between breaching a contract or not, and by consequence being able to avoid paying for repairs/compensation \cite{hvitved2012trace}.
 
-It is a widely accepted idea that faulty software is costly and can potentially compromise an entire project \cite{expensivesoftware}. With the broader adoption of DSLs by many financial organisations, the concerns regarding correctness (by the means of mathematical proof) and the ability to simultaneously express useful, real-world contracts has emerged. An important development in the field has been the idea of alienating the aspects of simulation and computation of a contract from the core of the language the contract is specified in. This idea allows to bring algebraic properties closer to the formalisation of contracts and, by doing so, allowing for symbolic (rather than numerical) computation and mathematical proof. This work has been elaborated on the «Certified Symbolic Management of Financial Multi-party Contracts» paper \cite{bahr2015certified} where a contract language is presented along with a type system that enforces that contracts specified in such language follow the principle of causality. These findings also allow for implementations within contract management, a feature that is certainly appreciated by these institutions since they have many contracts and parties to manage. Other features of the language described in aforementioned paper include type inference, reduction semantics, contract specialisation (partial evaluation), and horizon inference. Overall, and perhaps one of the most interesting aspects this paper brings is the robustness in the language brought by certification of its properties by using the Coq proof
+It is a widely accepted idea that faulty software is costly and can potentially compromise an entire project \cite{expensivesoftware}. With the broader adoption of DSLs by many financial organisations, the concerns regarding correctness (by means of mathematical proof) and the ability to simultaneously express useful, real-world contracts has emerged. An important development in the field has been the idea of alienating the aspects of simulation and computation of a contract from the core of the language the contract is specified in. This idea allows to bring algebraic properties closer to the formalisation of contracts and, by doing so, allowing for symbolic (rather than numerical) computation and mathematical proof. This work has been elaborated on the «Certified Symbolic Management of Financial Multi-party Contracts» paper \cite{bahr2015certified} where a contract language is presented along with a type system that enforces that contracts specified in such language follow the principle of causality. These findings also allow for implementations within contract management, a feature that is certainly appreciated by these institutions since they have many contracts and parties to manage. Other features of the language described in aforementioned paper include type inference, reduction semantics, contract specialisation (partial evaluation), and horizon inference. Overall, and perhaps one of the most interesting aspects this paper brings is the robustness in the language brought by certification of its properties by using the Coq proof
 assistant\footnote{Coq is a formal proof management system. It provides a formal language to write mathematical definitions, executable algorithms and theorems together with an environment for semi-interactive development of machine-checked proofs. More info: \url{https://github.com/coq/coq}}.
 
 \section{Why a DSL for Contracts?}
@@ -200,10 +117,12 @@ assistant\footnote{Coq is a formal proof management system. It provides a formal
 The previous section answers a big portion of this question, but it is important to mention that one of the main benefits of formalising contracts using a DSL is that it allows for automatic contract life-cycle management (CLM). CLM deals with managing a contract portfolio, specifically the creation, negotiation, approval, execution and analysis of contracts. A CSL normally handles the parts of CLM that require validation, execution and analysis of contracts \cite{hvitved2011contract}.
 
 \section{Contract Formalisation Requirements} \label{requirements}
-When formalising contracts it is vital to consider a formal contract model and a formal contract language separately. A formal model refers to a semantic mathematical model of a contract while a formal language refer to a syntactic representation of a contract. When creating a contract language both of these should ideally be combined in terms of the language's semantics \cite{hvitved2011contract}. In this paper, we focus solely on implementing the semantics in Scala since that a mathematical model is beyond the scope of this project.
+When formalising contracts it is vital to consider a formal contract model and a formal contract language separately. A formal model refers to a semantic mathematical model of a contract while a formal language refer to a syntactic representation of a contract. When creating a contract language both of these should ideally be combined in terms of the language's semantics \cite{hvitved2011contract}. In this paper, we focus solely on implementing the semantics in Scala since a mathematical model is beyond the scope of this project.
 % comment from patrick: It is perfectly fine for you not to consider a formal mathematical model. But I don’t see how this follows from following Andersen et al. Rather say that a mathematical model is beyond the scope of your work here.
 
-Hence, we restrict contracts to the definition of ought-to-do instead of ought-to-be. Following this we use Hvitved's definition of the requirements that needs to be upheld to formalise a contract "ideally":
+In this paper we restrict contracts to the definition of ought-to-do instead of ought-to-be following Prisacariu and Schneider \cite{prisacariu2007formal}. This is because we - as per the definition in Section \ref{contract} - expect the subjects to be stated explicitly and the actions they should perform to be visible, in contrast to being the product of an action. 
+
+Hvitved's definition of the requirements that needs to be upheld to formalise a contract "ideally" is used to compare our contract language against; see Figure \ref{fig:properties}.
 
 % comment from patrick: I didn’t see any discussion of why “ought-to-be” was considered for your language.
 
@@ -225,10 +144,10 @@ Hence, we restrict contracts to the definition of ought-to-do instead of ought-t
     \item Isomorphic encoding.
     \item Run-time monitoring.
     \item Blame assignment.
-    \item Amenability to (compositional) analysis \cite{hvitved2011contract}.
+    \item Amenability to (compositional) analysis.
 \end{list}
 \end{tcolorbox}
-\caption{Properties of contract languages}
+\caption{Properties of contract languages \cite{hvitved2011contract}.}
 \label{fig:properties}
 \end{figure}
 
@@ -242,9 +161,9 @@ While there exist several different approaches to contract formalisation, the th
     \item Trace-based formalisms, where a trace-based contract maps to the idea of formalising a contract by a finite sequence of events \cite{andersen2006compositional}.
 \end{itemize}
 
-In this report we follow a variation of trace-based formalism specifically process algebra since it is derived from J. Andersen et al., which our language is based upon.
+In this report our language is inspired by a variation of trace-based formalism; process algebra.
 
-It is in our understanding that a contract specification language should aim at fulfilling all the requirements mentioned in 2.3. But as Hvitved had expressed before, none had so far been able to encompass all of them \cite{hvitved2011contract}.
+A contract specification language should aim at fulfilling all the requirements mentioned in Figure \ref{fig:properties}, but so far no CL have been able to encompass all of them \cite{hvitved2011contract}.
 
 
 \chapter{Implementation}
@@ -258,9 +177,11 @@ It is in our understanding that a contract specification language should aim at 
 %     \item The \texttt{resource} field holds an object of the \texttt{Resource} type, which we will see later that can represent by different entities. The goal is to express the idea of \texttt{resource} being passed from \texttt{instigator} to \texttt{recipient},
 %     \item The \texttt{timeStamp} holds a \texttt{Date} which will later help us with certain details of contracts that could, for instance, involve deadlines.
 % \end{itemize}
-Before diving into the specifics of our contract language we will introduce the universe in which it exists.
+Before diving into the semantics of the implementation the universe in which it exists will be introduced followed by an example contract being implemented in the language.
 
-The events --- the entities we use in order to evaluate a given contract, are called \texttt{Transaction} and are instantiated by taking the parameters \texttt{(instigator, recipient, resource, time)} of which the instigator and recipient are both of type \texttt{Agent}, resource of type \texttt{Resource} and time of type \texttt{Date}. These are all our own custom defined types, to allow for simpler reasoning and easier extension of the language. Currently, we have defined 2 different types of \texttt{Resource}s, specifically \texttt{Item} and \texttt{MonetaryValue}. Where \texttt{Item} represents any item as a \texttt{String} and \texttt{MonetaryValue} represents money as a \texttt{Double}. \texttt{Date} is represented as the \texttt{LocalDateTime} from the \texttt{java.time} library. Using the default types of scala and the java library has allowed us to compare values, which we will use when creating contract templates.
+\section{Syntax}
+\label{syntax}
+The events --- the entities we use in order to evaluate a given contract, are called \texttt{Transaction} and are instantiated by taking the parameters \texttt{(instigator, recipient, resource, time)} of which the instigator and recipient are both of type \texttt{Agent}, resource of type \texttt{Resource} and time of type \texttt{Date}. These are all our own custom defined types, to allow for simpler reasoning and easier extension of the language. Currently, we have defined 2 different types of \texttt{Resource}s, specifically \texttt{Item} and \texttt{MonetaryValue}. Where \texttt{Item} represents any item as a \texttt{String} and \texttt{MonetaryValue} represents money as a \texttt{Double}. \texttt{Date} is represented as the \texttt{LocalDateTime} from the \texttt{java.time} library. Using the default types of Scala and the Java library has allowed us to compare values, which we will use when creating contract templates.
 
 Our contract language consists of the following combinators:
 \begin{lstlisting}
@@ -274,7 +195,7 @@ Where \texttt{Commitment} represents the base of the language and allows subcont
 
 \section{Example}
 
-Now that an understanding of our universe have been established we will now use the requirements from section \ref{requirements} to illustrate what our language is able to do, based on Figure \ref{fig:contract}.
+Now that an understanding of the universe have been established we will now use the requirements from Figure \ref{fig:properties} to illustrate what the language can do, based on Figure \ref{fig:contract}.
 
 \begin{figure}[!h]
     \centering
@@ -290,7 +211,7 @@ Now that an understanding of our universe have been established we will now use 
     \label{fig:contract}
 \end{figure}
 
-First, we model our contract participants (R2) and commitments (R3) through our \texttt{Commitment} combinator. Looking at Paragraph 1 in figure \ref{fig:contract} we could model the part of receiving the order in our language like so.
+First, we model our contract participants (R2) and commitments (R3) through our \texttt{Commitment} combinator. Looking at Paragraph 1 we could model the part of receiving the order like so.
 \begin{lstlisting}
 Commitment(t => 
     if (t.ins == buyer && t.rec == seller && t.res == goods) 
@@ -327,11 +248,11 @@ Commitment(t5 =>
 %
 The \texttt{Commitment} containing \texttt{t4} models Paragraph 3 as it checks whether the payment of 13 950 DKK is paid within the 30 days of delivery. The other \texttt{Commitment} models Paragraph 5 which is a reparations clause, that only comes into effect if the 13 950 DKK is not paid on time.
 
-It should be noted that while the language is able to consider reparation clauses (R6) as seen in Paragraph 4 in figure \ref{fig:contract} it is limited to which kind of reparations. Currently we only have the \texttt{or} operator that expresses a choice between the 2 subcontracts, hence either buyer is going to pay the remainder of the total sum within the 30 days of delivery or pay the remainder along with the additional fine. Let us say we wanted the buyer to also have the possibility of returning the goods then we would not want that to be a choice, but an interleaving of the payment subcontract and the returning subcontract, so either could be successfully handled without loosing the other.
+It should be noted that while the language is able to consider reparation clauses (R6) as seen in Paragraph 4 in Figure \ref{fig:contract} it is limited to which kind of reparations. Currently we only have the \texttt{or} operator that expresses a choice between the 2 subcontracts, hence either buyer is going to pay the remainder of the total sum within the 30 days of delivery or pay the remainder along with the additional fine. Let us say we wanted the buyer to also have the possibility of returning the goods then we would not want that to be a choice, but an interleaving of the payment subcontract and the returning subcontract, so either could be successfully handled without loosing the other.
 
 For the last parts of the contract, we can choose to indicate the contract has been completed by adding \texttt{Succ} in both of the \texttt{...} in the above code snippet. However, if we read Paragraph 1 carefully, it stipulates that the seller agrees to deliver the printer cartridges when an order is received from the buyer. This could suggest that this a potentially infinite contract (R8), that doesn't reach completion as it would simply wait until the next time an order from the buyer is received. If it was to be interpreted this way, we could simply use recursion by putting \texttt{salesContract(buyer, seller, goods, pay)} instead of \texttt{Succ}, assuming that there we have defined a template that does all of the above called \texttt{salesContract}.
 
-A requirement that is not considered in figure \ref{fig:contract}, but our language is still able to model is history-sensitive commitments (R10). Imagine that the contract is determined by a maximum number of printer cartridges, when that number is reached or exceeded then the contract terminates. Implementation-wise we would need to add 2 parameters to our \texttt{salesContract(buyer, seller, goods, pay, ordered, max)} which would then be added to our contract.
+A requirement that is not considered in Figure \ref{fig:contract}, but our language is still able to model is history-sensitive commitments (R10). Imagine that the contract is determined by a maximum number of printer cartridges, when that number is reached or exceeded then the contract terminates. Implementation-wise we would need to add 2 parameters to our \texttt{salesContract(buyer, seller, goods, pay, ordered, max)} which would then be added to our contract.
 \begin{lstlisting}
 Commitment(t => 
     if (t.ins == buyer && t.rec == seller && t.res == goods) 
@@ -344,8 +265,10 @@ Commitment(ts =>
 \texttt{Commitment(t => ...)} is the initial \texttt{Commitment}, while \texttt{Commitment(ts => ...)} indicates that when we have reached the maximum number of printer cartridges, the contract will conclude. Of course for this to be truly history-sensitive we would update our call inside \texttt{Commitment(t4 => ...)} and \texttt{Commitment(t5 => ...)} from above to \texttt{salesContract(buyer, seller, goods, pay, ordered + 100, max)}.
 
 \section{Semantics}
+\subsection{Example}
+Lastly, our language allows for run-time monitoring (R14), which is probably the most important requirement. If we again take a look at Figure \ref{fig:contract}, once this contract has been instantiated we would like to be able 'throw' transactions at it and have it return the reduced contract, if the transaction fulfils the subcontract. Reduced contract being what is left of the contract after a part of it has been fulfilled. A subcontract is a small part of the contract. In the example contract gone through in the last section each \texttt{Commitment} represents a subcontract. If the \texttt{Commitment} concerned with receiving the order of 100 printer cartridges from the buyer receives a transaction that satisfies it, this \texttt{Commitment} will 'disappear' and the reduced contract will be the remaining subcontracts. 
 
-Lastly, our language allows for run-time monitoring, which is probably the most important requirement. If we again take a look at figure \ref{fig:contract}, once this contract has been instantiated we would like to be able 'throw' transactions at it and have it return the reduced contract, if the transaction fulfils the subcontract. Let us define a transaction that will fulfil the first part of the contract.
+A transaction that will be able to do just this can be seen below.
 \begin{lstlisting}
 Transaction(buyer, seller, goods, Date())
 \end{lstlisting}{}
@@ -362,27 +285,74 @@ def evalC (e: Transaction) (c: Contract) :Contract = {
     }
 }
 \end{lstlisting}
-\texttt{evalC(x)(c)}, where $x$ is our transaction and $c$ the contract defined above. It will immediately go to the \texttt{case Commitment(f) => reduceCommitment(f,t)}. Where the function in the \texttt{Commitment} is run and if the return value is not \texttt{None} then returns the remainder of the contract ($c'$).
+\texttt{evalC(x)(c)}, where $x$ is our \texttt{Transaction} and $c$ the contract defined above. It will immediately go to the \texttt{case Commitment(f) => reduceCommitment(f,t)}. Where the function in the \texttt{Commitment} is run and if the return value is not \texttt{None} then returns the remainder of the contract ($c'$).
 
-% Comment from patrick: I would like to see the entirety of the evalC definition here, along with an explanation of the following: (1) what is the intended semantics of each combinator, and (2) how is this intended semantics reflected in the implementation of evalC.
+\subsection{Intended Semantics}
+
+As specified in section \ref{syntax} there exits 4 different contract patterns in the CL, two of which are combinators. Below is an explanation of their intended semantics and how this is reflected in the implementation of the \texttt{evalC} function.
+
+\textbf{\texttt{Commitment(f)}} \\
+\texttt{Commitment} represents the transfer of a resource between the instigator and the recipient. It is the atomic contract of the CL. \texttt{f} will contain a check to see whether a given \texttt{Transaction} fulfils a criteria specified within \texttt{f}, if it does it will return \texttt{Some(Contract)} else it will return \texttt{None}, which indicates a breach of contract. The \texttt{evalC} function makes use of this through the helper function \texttt{reduceCommitment}.
+\begin{lstlisting}
+def reduceCommitment (f: Transaction => Option[Contract], e: Transaction) = {
+    val o = f(e)
+    if (o.isDefined) o.get else Fail
+}
+\end{lstlisting}
+The way \texttt{reduceCommitment} enforces the semantics of the \texttt{Commitment(f)} is by evaluating \texttt{f} and returning the remainder of the contract, if it has been been evaluated to \texttt{Some(Contract)} otherwise it will return \texttt{Fail} to indicate a breach of contract. \\\\
+%
+\textbf{\texttt{Or(c1,c2)}} \\
+Like mentioned in section \ref{syntax} the \texttt{Or} is supposed to reflect a choice between two subcontracts (\texttt{c1,c2}). The choice is based on whether a \texttt{Transaction} fits \texttt{c1} or \texttt{c2}.
+\begin{lstlisting}
+def reduceOr (c1: Contract, c2: Contract): Contract = {
+    val evalC1 = evalC (e) (c1)
+    lazy val evalC2 = evalC (e) (c2)
+    evalC1 match {
+        case Fail => evalC2
+        case _    => evalC1
+    }
+}
+\end{lstlisting}
+The \texttt{reduceOr} function implements this by first evaluating \texttt{c1} to \texttt{evalC1}, if \texttt{evalC1} is a non-failure, then \texttt{evalC1} is returned. In the case that it is not a non-failure \texttt{c2} is evaluated to \texttt{evalC2} and returned. As shown in the above code snippet whenever a transaction fits one of the subcontracts, the other is no longer part of the contract. \\\\
+\textbf{\texttt{Succ}} \\
+\texttt{Succ} represent the 'empty' contract, which indicates that all subcontracts have been satisfied. Since a finished contract should not accept any transactions it evaluates to \texttt{Fail} if given one. \\\\
+\textbf{\texttt{Fail}} \\
+\texttt{Fail} depicts a breach of contract or a contract that is impossible to satisfy.
+
+Another function in our language, that is not a combinator or used in the above example is \texttt{seq}. The idea of this function is to to allow for sequential execution of subcontracts that do not have any relative constraints. The way it is expressed is using algebraic laws to define the two given subcontracts in terms their respective combinators.
+
 
 \chapter{Discussion}
-After having seen what our implementation is able to do, it is poignant to point out where it falls short. The requirements our language is unable to fulfil are: R7, R9, R12, R13, R15 and R16 from Section \ref{requirements}.
+After having seen what our implementation is able to do, it is poignant to point out where it could be improved. All the requirements mentioned below stem from Figure \ref{fig:properties}.
 
-Despite the fact the language is able to express instantaneous events, like seen in Paragraph 1 of figure \ref{fig:contract}, it does not allow for continuous events as there is simply no way of expressing that in its current form. In terms of R9 it would be possible to add observables, say we add another paragraph in figure \ref{fig:contract} that says the contract happens annually and should be adjusted according to inflation. However, since it would require to expand the current contract language it is not fulfilled.
+Despite the fact the language is able to express instantaneous events, like seen in Paragraph 1 of Figure \ref{fig:contract}, it does not allow for continuous events as there is simply no way of expressing that in its current form. In terms of R9 it would be possible to add observables, say we add another paragraph in Figure \ref{fig:contract} that says the contract happens annually and should be adjusted according to inflation. However, since it would require to expand the current contract language it is not fulfilled.
 
-The convenience features, R12 and R13, are not covered in the language. R12 is not satisfied because there is no instantiation combinator --- instead we have only made functions that can be called to implement a specific type of contract, which is basically what the combinator would need. Our language does not satisfy one-to-one correspondence with the informal paper contract (R13). We do provide some infix operators, but nothing more.
+The convenience features, R12 and R13, are not covered in the language. R12 is not satisfied because there is no instantiation pattern --- instead we have made functions that can be called to implement a specific type of contract, which is basically what the pattern would need. Adding to this the language does not satisfy one-to-one correspondence with the informal paper contract (R13). We do provide some infix operators, but was not aiming to implementing these things given the short time frame.
 
-When evaluating contracts we are not able to assign blame (R15), since we currently only report on a breach of contract, not the party who broke it.
+When evaluating contracts we are not able to assign blame (R15), since we currently report on a breach of contract, not the party who broke it.
 
-While the combinator \texttt{Commitment} has allowed us to make our language quite expressive, it has come at a cost. By making it contain a lambda expression that returns an \texttt{Option[Contract]}, the creation of template contracts can become quite complex and hard to reason about. Moreover, it has made it impossible to perform analysis (R16), which is one of the main goals we set when starting out the project.
+While the combinator \texttt{Commitment} has allowed us to make our language quite expressive, it has come at a cost. By making it contain a lambda expression that returns an \texttt{Option[Contract]}, the creation of template contracts can become quite complex and hard to reason about. Moreover, it has made it impossible to perform analysis (R16).
 
-This means that when we move into our thesis the prototype contract language we have created will not allow us work on interesting properties on contracts and analyse them using property-based testing, simply because we contain all of our information in functions. This means that we would need to refactor the language before we could find any meaningful properties.
+This means that when we move into our thesis the prototype contract language we have created may need to be refactored. Yet, the aim of being able to use property-based testing for analysis is still possible as we are able to do run-time monitoring of contracts.
 
 \chapter{Conclusion}
-The contract language we have made does create a good foundation for us to move on with in our thesis, but even though it fulfils a lot of the requirements for an ideal language, the complexity and trade offs we have made, means that some of the language fundamentals needs to be rethought.
 
-The main issue is that we are unable to do any simple analysis, which means that any property-based testing we would like to do on properties of contracts would currently be impossible. The next step is to refactor the code base to allow for analysis, so this would become possible.
+% The contract language we have made does create a good foundation for us to move on with in our thesis, but even though it fulfils a lot of the requirements for an ideal language, the complexity and trade offs we have made, means that some of the language fundamentals needs to be rethought.
+
+% The main issue is that we are unable to do any simple analysis, which means that any property-based testing we would like to do on properties of contracts would currently be impossible. The next step is to refactor the code base to allow for analysis, so this would become possible.
+
+Building the present prototype has exposed some interesting aspects we would like to refer:
+\begin{itemize}
+    \item The functional programming style seems to be extremely suited for the task. Very easily one can extend or alter the project with a few lines of code and, when adding this to how compact the style is, it becomes comes somewhat easy to model and reason about the result.
+    \item Functional programming also seems to very suited to build a domain-specific language. Certain definitions took only line of code, and this is certainly a convenience.
+    \item The choice for Scala seemed like a good idea since we could use many of the Java's standard library classes. This came particularly handy when implementing features related to time, such as \texttt{Date}, but we do believe this particular language is still too convoluted for this particular purpose. It still requires a lot of syntax to express certain functionalities, which ends up defeating a bit the purpose of using the functional programming style.
+    \item On the other end, Scala does have some interesting features --- the ability to implement custom infix operators, the \texttt{apply} method which allows for a very short way to instantiate new objects, to name a few. But before one could take advantage of these features, it was necessary to define them which, as mentioned in the previous point, added some noise to what could be a very short DSL.
+    \item Having had the language defined, the template contracts still required a lot of definitions and heavy knowledge of the language implementation.
+    \item Considering the last two bullet points, on a future iteration it could be beneficial to experiment with a more compact language such as Haskell which has also been the standard for this kind of projects.
+    \item Functionality was achieved but at with a big trade off for expressiveness. The language implementation is sensible and compact, but the templates turned out to be very long. We were aiming at an easier way to describe the templates.
+    \item Looking back at Hvitved's survey on contract languages, some important features were left unmodelled, as exposed in the Discussion chapter.
+
+\end{itemize}
 
 \bibliographystyle{apalike}
 \bibliography{references}
