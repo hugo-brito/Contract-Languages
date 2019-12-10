@@ -58,7 +58,6 @@
 % url fonts
 \urlstyle{sf}
 
-
 % Stuff we have added ourselves
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Quotes in report
