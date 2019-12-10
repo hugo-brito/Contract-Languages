@@ -63,6 +63,9 @@ object Dates extends App {
         def apply(year: Int, month: Int, dayOfMonth: Int, hour: Int, minutes: Int): Date =
             new Date(LocalDateTime.of(year, month, dayOfMonth, hour, minutes))
         
+        def apply(year: Int, month: Int, dayOfMonth: Int): Date =
+            new Date(LocalDateTime.of(year, month, dayOfMonth, 0, 0))
+
         def apply(): Date = 
             new Date(LocalDateTime.now())
     }

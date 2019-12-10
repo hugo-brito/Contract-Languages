@@ -11,7 +11,6 @@ object Language extends App {
     sealed trait Resource
     case class Item(name: String) extends Resource
     case class MonetaryValue(amount: Double) extends Resource
-    case class Invoice(seller: Agent, buyer: Agent, total: MonetaryValue, issue: Date, due: Date) extends Resource
     
     // Event type
     case class Transaction(ins: Agent, rec: Agent, res: Resource, time: Date)
@@ -37,15 +36,15 @@ object Language extends App {
 
     // Return Option[Contract]
     // Evaluator function
-    def evalC (e: Transaction) (c: Contract) :Contract = { 
+    def reduce (e: Transaction) (c: Contract) :Contract = { 
 
         // orElse
         def reduceOr (c1: Contract, c2: Contract): Contract = {
-            val evalC1 = evalC (e) (c1)
-            lazy val evalC2 = evalC (e) (c2)
-            evalC1 match {
-                case Fail => evalC2
-                case _    => evalC1
+            val c1p = reduce (e) (c1)
+            lazy val c2p = reduce (e) (c2)
+            c1p match {
+                case Fail => c2p
+                case _    => c1p
             }
         }
 
