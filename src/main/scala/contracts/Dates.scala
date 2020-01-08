@@ -1,4 +1,4 @@
-package Contracts
+package contracts
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
