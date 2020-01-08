@@ -9,7 +9,7 @@ object Language extends App {
     // Agent type
     case class Agent(name: String)
 
-    // Resource types
+    // Resource type
     sealed trait Resource
     case class Item(name: String) extends Resource
     case class MonetaryValue(amount: Double) extends Resource
