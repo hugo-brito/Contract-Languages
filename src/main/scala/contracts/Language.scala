@@ -3,11 +3,13 @@ package Contracts
 
 import Dates._
 
+// The Contract language
 object Language extends App {
 
     // Agent type
     case class Agent(name: String)
 
+    // Resource types
     sealed trait Resource
     case class Item(name: String) extends Resource
     case class MonetaryValue(amount: Double) extends Resource
@@ -15,9 +17,10 @@ object Language extends App {
     // Event type
     case class Transaction(ins: Agent, rec: Agent, res: Resource, time: Date)
 
-    // Contract type
     sealed trait Contract {
+        // OR prefix
         def or(that: Contract) = Or(this, that)
+        // Prefix will first execute this Contract and then That.
         def seq(that: Contract) :Contract= 
             this match {
                 case Commitment(f) => Commitment(t => f(t) match {
@@ -28,14 +31,13 @@ object Language extends App {
                 case Fail => Fail
             }
     }
-
+    // Contract types
     case class Commitment(val f: Transaction => Option[Contract]) extends Contract
     case class Or(val c1: Contract, val c2: Contract) extends Contract
     case object Succ extends Contract
     case object Fail extends Contract
 
-    // Return Option[Contract]
-    // Evaluator function
+    // Reduction function
     def reduce (e: Transaction) (c: Contract) :Contract = { 
 
         // orElse

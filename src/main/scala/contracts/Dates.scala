@@ -3,8 +3,10 @@ package Contracts
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
+// Module for handling dates
 object Dates extends App {
 
+    // Different units of time.
     sealed trait Time {
         def unit :String
         def no :Long
@@ -40,9 +42,10 @@ object Dates extends App {
         def no :Long = this.num
     }
 
+    // The date class with different prefixes to allow for comparison of Dates and calculation
     case class Date (date: LocalDateTime){
         def diff (that :Date, unit: String) = 
-            this.date.until(that.date, ChronoUnit.valueOf(unit)) // unit should be capital
+            this.date.until(that.date, ChronoUnit.valueOf(unit)) // units should be capital
 
         def >(that :Date) :Boolean = this.date isAfter that.date
         
@@ -59,6 +62,7 @@ object Dates extends App {
         def +(time: Time) = Date(this.date plus(time.no, ChronoUnit.valueOf(time.unit)))
     }
 
+    // To allow for different instantiations of Dates
     object Date {
         def apply(year: Int, month: Int, dayOfMonth: Int, hour: Int, minutes: Int): Date =
             new Date(LocalDateTime.of(year, month, dayOfMonth, hour, minutes))
@@ -70,6 +74,7 @@ object Dates extends App {
             new Date(LocalDateTime.now())
     }
 
+    // Get the smallest date out
     def min(d1: Date, d2: Date) :Date = 
     (d1,d2) match {
         case (d1,d2) if (d1 > d2) => d2
